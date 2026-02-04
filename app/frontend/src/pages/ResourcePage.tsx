@@ -1,17 +1,16 @@
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent } from '@/components/ui/card'
-import { Plus, Compass, Users, GraduationCap, Globe, Briefcase, Palette } from 'lucide-react'
+import { Compass, Users, GraduationCap, Globe, Briefcase, Palette, ArrowRight, Sparkles } from 'lucide-react'
 import { TAXONOMY } from '@/lib/taxonomy'
 import { SEO } from '@/components/SEO'
 import { StructuredData } from '@/components/StructuredData'
-import { Breadcrumb } from '@/components/Breadcrumb'
 import { GlobalResourceSearch } from '@/components/GlobalResourceSearch'
-import { generateSectionId } from '@/lib/geo-utils'
+import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 
-// Helper function to get the icon component with color
-const getIconComponent = (iconName: string, color: string) => {
-  const iconProps = { className: 'w-12 h-12 sm:w-16 sm:h-16', style: { color, strokeWidth: 2.5 } }
+// Helper function to get the icon component
+const getIconComponent = (iconName: string) => {
+  const iconProps = { className: 'w-8 h-8' }
   switch (iconName) {
     case 'compass': return <Compass {...iconProps} />
     case 'users': return <Users {...iconProps} />
@@ -23,16 +22,16 @@ const getIconComponent = (iconName: string, color: string) => {
   }
 }
 
-// Helper function to get darker color for icons based on category
-const getIconColor = (categoryId: string) => {
+// Get gradient colors for each category
+const getCategoryGradient = (categoryId: string) => {
   switch (categoryId) {
-    case 'living-essentials': return '#F4B33D'      // PMS 129 to match title
-    case 'community-belonging': return '#4987C6'    // PMS 285 for light blue background
-    case 'education-youth': return '#08A576'        // PMS 354 (darker green)
-    case 'esl-immigrant': return '#98CC70'          // PMS 382 to match title
-    case 'work-business': return '#954D9E'          // PMS 267 (purple)
-    case 'culture-leisure': return '#F15647'        // PMS 179 (coral/red)
-    default: return '#2E3192'
+    case 'living-essentials': return 'from-amber-500/10 to-yellow-500/5'
+    case 'community-belonging': return 'from-blue-500/10 to-indigo-500/5'
+    case 'education-youth': return 'from-green-500/10 to-emerald-500/5'
+    case 'esl-immigrant': return 'from-lime-500/10 to-green-500/5'
+    case 'work-business': return 'from-purple-500/10 to-violet-500/5'
+    case 'culture-leisure': return 'from-red-500/10 to-orange-500/5'
+    default: return 'from-gray-500/10 to-gray-500/5'
   }
 }
 
@@ -45,7 +44,6 @@ export function ResourcePage() {
   }
 
   // CollectionPage schema for main resources directory
-  // Helps AI understand this is a comprehensive newcomer resource directory
   const resourcesDirectorySchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -66,18 +64,8 @@ export function ResourcePage() {
           "name": category.label,
           "description": category.description,
           "url": `https://www.pittsburghpioneer.com/resources/${category.id}`,
-          "about": {
-            "@type": "Thing",
-            "name": "Newcomer Resources",
-            "description": `Resources for newcomers in the ${category.label.toLowerCase()} category`
-          }
         }
       }))
-    },
-    "about": {
-      "@type": "Thing",
-      "name": "Pittsburgh Newcomer Support",
-      "description": "Resources and services to help immigrants and newcomers settle successfully in Pittsburgh"
     },
     "provider": {
       "@type": "Organization",
@@ -95,78 +83,136 @@ export function ResourcePage() {
         url="https://www.pittsburghpioneer.com/resources"
       />
       <StructuredData data={resourcesDirectorySchema} />
-      <main className="min-h-screen bg-white">
-        <div className="container max-w-6xl mx-auto py-12 px-4 sm:px-16">
-        <Breadcrumb
-          items={[
-            {
-              label: t('nav.resources', 'Resources')
-            }
-          ]}
-          className="mb-8"
-        />
-        <header className="mb-12 text-center">
-          <h1 id={generateSectionId(t('toolkit.title'))} className="brand-subheading text-brand-reflex-blue mb-4">
-            {t('toolkit.title')}
-          </h1>
-          <p className="brand-accent text-brand-pms-285 text-lg max-w-2xl mx-auto">
-            {t('toolkit.description')}
-          </p>
-        </header>
 
-        {/* Global Search Bar */}
-        <section className="mb-8 max-w-3xl mx-auto">
-          <GlobalResourceSearch />
+      <main className="min-h-screen bg-white pt-24">
+        {/* Hero Header */}
+        <section className="bg-brand-reflex-blue py-16 sm:py-20 relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 25% 25%, #F4B33D 1px, transparent 1px),
+                               radial-gradient(circle at 75% 75%, #F4B33D 1px, transparent 1px)`,
+              backgroundSize: '60px 60px'
+            }} />
+          </div>
+
+          <div className="container max-w-6xl mx-auto px-6 relative z-10">
+            {/* Badge */}
+            <div className="flex justify-center mb-8">
+              <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                <Sparkles className="w-4 h-4 text-brand-pms-129" />
+                <span className="text-[9px] uppercase tracking-[0.3em] font-black text-white/80">
+                  {t('toolkit.badge', '500+ Vetted Resources')}
+                </span>
+              </div>
+            </div>
+
+            <header className="text-center mb-12">
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 leading-[1.1]">
+                {t('toolkit.title', 'Resource')} <span className="text-brand-pms-129 italic">{t('toolkit.titleAccent', 'Toolkit')}</span>
+              </h1>
+              <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto font-light leading-relaxed">
+                {t('toolkit.description', 'Everything you need to settle and thrive in Pittsburgh, organized by category and vetted by our community partners.')}
+              </p>
+            </header>
+
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto">
+              <GlobalResourceSearch />
+            </div>
+          </div>
         </section>
 
-        {/* Grid of six categories from centralized taxonomy */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 auto-rows-[240px]">
-          {TAXONOMY.slice(0, 6).map((category) => (
-            <Card
-              key={category.id}
-              className={`${category.color} ${category.hoverColor} touch-target interactive-element hover:shadow-xl transition-all duration-300 border-2 border-brand-pms-285/20 hover:border-brand-pms-285 hover:scale-105 transform h-full cursor-pointer`}
-              onClick={() => handleCategoryClick(category.id)}
-              style={{ minHeight: '240px' }}
+        {/* Categories Grid */}
+        <section className="py-16 sm:py-24">
+          <div className="container max-w-6xl mx-auto px-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {TAXONOMY.slice(0, 6).map((category, idx) => (
+                <motion.div
+                  key={category.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <button
+                    onClick={() => handleCategoryClick(category.id)}
+                    className="group w-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                  >
+                    {/* Background Gradient */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient(category.id)} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+
+                    {/* Content */}
+                    <div className="relative z-10">
+                      {/* Icon */}
+                      <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                        {getIconComponent(category.icon)}
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                        {t(`resources.taxonomy.categories.${category.id}`, { defaultValue: category.label })}
+                      </h3>
+
+                      {/* Description */}
+                      <p className="text-gray-600 text-sm mb-6 leading-relaxed">
+                        {category.description}
+                      </p>
+
+                      {/* CTA */}
+                      <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                        <span>{t('common.explore', 'Explore')}</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                      </span>
+                    </div>
+
+                    {/* Number Badge */}
+                    <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-brand-reflex-blue/5 flex items-center justify-center text-brand-reflex-blue/20 font-black text-lg group-hover:bg-brand-pms-129/10 group-hover:text-brand-pms-129/40 transition-all duration-500">
+                      {idx + 1}
+                    </div>
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-16 sm:py-20 bg-gradient-to-b from-gray-50 to-white">
+          <div className="container max-w-4xl mx-auto px-6">
+            <motion.div
+              className="text-center p-12 sm:p-16 rounded-3xl bg-brand-reflex-blue relative overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
             >
-              <CardContent className="p-6 sm:p-8 h-full flex flex-col justify-start gap-2">
-                <div className="flex items-center justify-end">
-                  <div className="w-8 h-8 bg-brand-reflex-blue rounded-full flex items-center justify-center">
-                    <Plus className="w-5 h-5 text-white" />
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="mb-4 flex justify-center">
-                    {getIconComponent(category.icon, getIconColor(category.id))}
-                  </div>
-                  <h3 className={`brand-subheading ${category.textColor} text-lg sm:text-xl`}>
-                    {(() => {
-                      const label = t(`resources.taxonomy.categories.${category.id}`, { defaultValue: category.label })
-                      return <span className="text-2xl sm:text-3xl">{label}</span>
-                    })()}
-                  </h3>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </section>
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-5">
+                <div className="absolute inset-0" style={{
+                  backgroundImage: `radial-gradient(circle at 25% 25%, #F4B33D 1px, transparent 1px)`,
+                  backgroundSize: '40px 40px'
+                }} />
+              </div>
 
-        {/* Call to Action Section - keep as requested */}
-        <section className="text-center mt-12 p-8 bg-brand-pms-290/50 rounded-2xl border border-brand-pms-285/30">
-          <h2 id={generateSectionId(t('common.needPersonalizedRecommendations'))} className="brand-subheading text-brand-reflex-blue mb-4">
-            {t('common.needPersonalizedRecommendations')}
-          </h2>
-          <p className="brand-accent text-brand-pms-285 mb-6 max-w-2xl mx-auto">
-            {t('common.personalizedRecommendationsDescription')}
-          </p>
-          <button
-            onClick={() => navigate('/screening')}
-            className="btn-brand-primary touch-target text-lg px-8 py-4"
-            style={{ minHeight: '48px' }}
-          >
-            {t('common.getYourPersonalRoadmap')}
-          </button>
+              <div className="relative z-10">
+                <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-6 leading-[1.1]">
+                  {t('common.needPersonalizedRecommendations', 'Need personalized')} <span className="text-brand-pms-129 italic">{t('common.recommendations', 'recommendations?')}</span>
+                </h2>
+                <p className="text-lg text-white/70 mb-8 max-w-xl mx-auto font-light">
+                  {t('common.personalizedRecommendationsDescription', 'Take our quick survey and get a customized roadmap based on your specific needs and goals.')}
+                </p>
+                <Link
+                  to="/screening"
+                  className="group inline-flex items-center gap-3 bg-brand-pms-129 text-brand-reflex-blue px-10 py-5 rounded-sm text-[11px] font-black uppercase tracking-[0.2em] hover:shadow-[0_0_40px_rgba(244,179,61,0.5)] transition-all duration-500 hover:scale-105"
+                >
+                  <span>{t('common.getYourPersonalRoadmap', 'Get Your Personal Roadmap')}</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                </Link>
+              </div>
+            </motion.div>
+          </div>
         </section>
-      </div>
       </main>
     </>
   )

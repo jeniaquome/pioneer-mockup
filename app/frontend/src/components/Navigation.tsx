@@ -108,11 +108,11 @@ export function Navigation() {
   // Get consistent color for this user
   const profileColor = useMemo(() => getUserColor(user?.id), [user?.id])
 
-  // Mockup-style navigation items for public users
+  // Mockup-style navigation items for public users - links to page sections
   const publicNavItems = [
-    { label: t('nav.neighborhoods', 'NEIGHBORHOODS'), to: '/resources' },
+    { label: t('nav.mission', 'THE MISSION'), to: '/#mission' },
+    { label: t('nav.resources', 'RESOURCES'), to: '/#resources' },
     { label: t('nav.gallery', 'GALLERY'), to: '/#gallery' },
-    { label: t('nav.resources', 'RESOURCES'), to: '/resources' },
     { label: t('nav.pioneerStory', 'THE PIONEER STORY'), to: '/about' },
   ]
 

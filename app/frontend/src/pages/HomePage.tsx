@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
-  MapPin,
   Home,
   BookOpen,
   Users,
@@ -11,12 +10,10 @@ import {
   Play,
   Sparkles,
   Camera,
-  MessageCircle
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { SEO } from '@/components/SEO'
 import { StructuredData } from '@/components/StructuredData'
-import { openChatWidget } from '@/components/ChatWidget'
 import { useState, useEffect, useRef } from 'react'
 
 // Pittsburgh photos from public folder
@@ -26,13 +23,6 @@ const pittsburghPhotos = [
   { src: '/Copy of jason-pischke-YfoxivJxNT4-yellowbridgeatnight.jpg', title: 'City Lights', location: 'North Shore' },
   { src: '/Copy of yosselin-artavia-RKH2ws90pMI-unsplashriversunsetpittsburghdowntownviewacrosswater.jpg', title: 'Golden Hour', location: 'Three Rivers' },
   { src: '/Copy of zhen-yao-is1I1XTI4NU-unsplashcitybluewithlightslitupatnightbridgescrossingriver.jpg', title: 'Bridges at Night', location: 'Allegheny River' },
-  { src: '/Copy of AdobeStock_371672182_yellow_bridge.jpeg', title: 'Steel City Pride', location: 'Andy Warhol Bridge' },
-  { src: '/Copy of jocelyn-allen-AgpI111Z4Ys-unsplashPGAplacewithyellowbridgecuttinginfront.jpg', title: 'PPG Place', location: 'Downtown' },
-  { src: '/Copy of willie-shaw-64iuIOektb4-unsplashyellowbridgeroadviewwithsunshiningthrough.jpg', title: 'Morning Light', location: 'Fort Duquesne Bridge' },
-  { src: '/Copy of AdobeStock_392745144PPGplaceglass_building.jpeg', title: 'Glass Castle', location: 'PPG Place' },
-  { src: '/Copy of jimmy-woo-l4pVJ4zzwt0-unsplashaspinwallpittsburghneighborhoodhillview.jpg', title: 'Neighborhood Views', location: 'Aspinwall' },
-  { src: '/Copy of nathan-kelly-U3eEA6puoA4-unsplashschenleyparkbridgepillarsforestunderrustygreenbridge.jpg', title: 'Hidden Gems', location: 'Schenley Park' },
-  { src: '/Copy of jocelyn-allen-0Orb6gDDn4g-unsplashriverwithskyreflectedonwater.jpg', title: 'Reflections', location: 'Ohio River' },
 ]
 
 export function HomePage() {
@@ -53,11 +43,6 @@ export function HomePage() {
     window.addEventListener('mousemove', handleMouseMove)
     return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [])
-
-  const handleBridgitClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    openChatWidget()
-  }
 
   // Determine base URL for absolute URLs
   const getBaseUrl = () => {
@@ -82,7 +67,7 @@ export function HomePage() {
         "name": "Pittsburgh Tomorrow",
         "alternateName": "Pittsburgh Tomorrow Pioneer",
         "url": baseUrl,
-        "logo": `${baseUrl}/branding/assets/new-bridgit.png`
+        "logo": `${baseUrl}/branding/assets/logo-0.svg`
       },
       {
         "@id": `${baseUrl}/#website`,
@@ -119,8 +104,8 @@ export function HomePage() {
         {/* Grain Texture Overlay */}
         <div className="fixed inset-0 pointer-events-none z-[150] opacity-[0.015] mix-blend-overlay grain-texture" />
 
-        {/* Cinematic Hero Section - pt-24 to account for fixed nav */}
-        <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24">
+        {/* Hero Section */}
+        <section ref={heroRef} id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
           {/* Animated Gradient Mesh Background */}
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-gradient-to-b from-brand-reflex-blue via-brand-reflex-blue/80 to-black opacity-40 z-[5]" />
@@ -171,9 +156,9 @@ export function HomePage() {
 
             <div className="space-y-6 animate-slide-up">
               <h1 className="text-white text-5xl sm:text-6xl md:text-7xl lg:text-[8.5rem] font-serif font-black leading-[0.85] tracking-tighter drop-shadow-2xl">
-                {t('homepage.heroTitle', 'A New Chapter')} <br />
+                {t('homepage.heroTitle', 'Ready to become')} <br />
                 <span className="italic font-light bg-gradient-to-r from-white via-brand-pms-129 to-white bg-clip-text text-transparent animate-shimmer">
-                  {t('homepage.heroTitleAccent', 'in the Steel City.')}
+                  {t('homepage.heroTitleAccent', 'a local?')}
                 </span>
               </h1>
               {/* Decorative Line */}
@@ -186,38 +171,37 @@ export function HomePage() {
 
             <div className="max-w-3xl mx-auto space-y-10 animate-fade-in delay-500">
               <p className="text-xl sm:text-2xl md:text-3xl text-white/95 font-light leading-relaxed tracking-wide drop-shadow-lg">
-                {t('homepage.heroDescription', "Moving to Pittsburgh? Don't spend hours searching dozens of sites.")}
-                <span className="font-black text-brand-pms-129 drop-shadow-[0_0_20px_rgba(244,179,61,0.5)]"> Pittsburgh Pioneer</span> {t('homepage.heroDescriptionContinued', 'is your personal, free guide to settling in quickly and warmly.')}
+                {t('homepage.heroDescription', 'Join thousands of newcomers who found their home in Pittsburgh with our free, comprehensive guide.')}
               </p>
 
               <div className="flex flex-col md:flex-row gap-5 justify-center animate-fade-in delay-700">
                 <Link to="/screening" className="group relative overflow-hidden bg-brand-pms-129 text-brand-reflex-blue px-12 py-5 rounded-sm text-[11px] font-black uppercase tracking-[0.25em] flex items-center justify-center gap-4 hover:shadow-[0_0_60px_rgba(244,179,61,0.6)] transition-all duration-500 hover:scale-105">
-                  <span className="relative z-10">{t('homepage.beginJourney', 'Begin Your Journey')}</span>
+                  <span className="relative z-10">{t('homepage.startYourJourney', 'Start Your Journey')}</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-500 relative z-10" />
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </Link>
-                <Link to="/resources" className="group px-12 py-5 rounded-sm text-[11px] font-black uppercase tracking-[0.25em] text-white border-2 border-white/40 backdrop-blur-xl hover:bg-white/10 hover:border-white/70 transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] relative overflow-hidden">
-                  <span className="relative z-10 flex items-center gap-3">
-                    <MapPin className="w-4 h-4" />
-                    {t('homepage.exploreMap', 'Explore The Map')}
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                <Link to="/about" className="group px-12 py-5 rounded-sm text-[11px] font-black uppercase tracking-[0.25em] text-white border-2 border-white/40 backdrop-blur-xl hover:bg-white/10 hover:border-white/70 transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] relative overflow-hidden flex items-center justify-center gap-3">
+                  <div className="w-8 h-8 rounded-full border-2 border-white/50 flex items-center justify-center group-hover:border-brand-pms-129 transition-colors">
+                    <Play className="w-3 h-3 ml-0.5" />
+                  </div>
+                  <span className="relative z-10">{t('homepage.watchTheStory', 'Watch The Story')}</span>
                 </Link>
               </div>
             </div>
-          </div>
 
-          {/* Enhanced Floating Stat */}
-          <div className="absolute bottom-16 left-16 hidden lg:block z-20 animate-slide-right">
-            <div className="flex items-center gap-6 text-white/70 group cursor-pointer">
-              <div className="w-16 h-[2px] bg-gradient-to-r from-brand-pms-129 to-transparent group-hover:w-24 transition-all duration-700" />
+            {/* Trust Indicators */}
+            <div className="grid grid-cols-3 gap-6 sm:gap-12 max-w-2xl mx-auto pt-8 animate-fade-in delay-700">
               <div className="space-y-1">
-                <span className="text-[9px] uppercase tracking-[0.35em] font-black text-white/90 block">
-                  {t('homepage.statFree', '100% Free • Personalized')}
-                </span>
-                <span className="text-[8px] uppercase tracking-[0.3em] font-bold text-white/60">
-                  {t('homepage.statCommunity', 'Community Backed')}
-                </span>
+                <div className="text-2xl sm:text-3xl font-serif font-black text-brand-pms-129">10k+</div>
+                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-bold text-white/50">{t('homepage.familiesHelped', 'Families Helped')}</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-2xl sm:text-3xl font-serif font-black text-brand-pms-129">90</div>
+                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-bold text-white/50">{t('homepage.neighborhoods', 'Neighborhoods')}</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-2xl sm:text-3xl font-serif font-black text-brand-pms-129">100%</div>
+                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-bold text-white/50">{t('homepage.freeForever', 'Free Forever')}</div>
               </div>
             </div>
           </div>
@@ -327,7 +311,7 @@ export function HomePage() {
         </section>
 
         {/* Feature Cards Section */}
-        <section id="features" className="py-20 sm:py-32 lg:py-40 bg-gradient-to-b from-gray-50 via-gray-100/50 to-white relative overflow-hidden">
+        <section id="resources" className="py-20 sm:py-32 lg:py-40 bg-gradient-to-b from-gray-50 via-gray-100/50 to-white relative overflow-hidden">
           {/* Decorative Grid Pattern */}
           <div className="absolute inset-0 opacity-[0.02]" style={{
             backgroundImage: `repeating-linear-gradient(0deg, #2E3192 0px, #2E3192 1px, transparent 1px, transparent 60px),
@@ -363,7 +347,7 @@ export function HomePage() {
                 { title: t('homepage.featureEducation', 'Education: Adult And Youth'), icon: <BookOpen />, desc: t('homepage.featureEducationDesc', 'Navigating the Pittsburgh school system with ease.'), color: 'from-green-500/10 to-green-600/5', link: '/resources/education-youth' },
                 { title: t('homepage.featureESL', 'ESL And Immigrant Support'), icon: <Globe />, desc: t('homepage.featureESLDesc', 'Connecting you with local translators and ESL programs.'), color: 'from-orange-500/10 to-orange-600/5', link: '/resources/esl-immigrant' },
                 { title: t('homepage.featureJobs', 'Jobs And Business Resources'), icon: <CheckCircle2 />, desc: t('homepage.featureJobsDesc', 'Career services, job boards, and business resources.'), color: 'from-pink-500/10 to-pink-600/5', link: '/resources/work-business' },
-                { title: t('homepage.featureCulture', 'Culture, Arts And Fun'), icon: <MapPin />, desc: t('homepage.featureCultureDesc', 'Museums, events, parks, and entertainment in the Steel City.'), color: 'from-teal-500/10 to-teal-600/5', link: '/resources/culture-leisure' },
+                { title: t('homepage.featureCulture', 'Culture, Arts And Fun'), icon: <Camera />, desc: t('homepage.featureCultureDesc', 'Museums, events, parks, and entertainment in the Steel City.'), color: 'from-teal-500/10 to-teal-600/5', link: '/resources/culture-leisure' },
               ].map((item, idx) => (
                 <motion.div
                   key={idx}
@@ -409,7 +393,7 @@ export function HomePage() {
           </div>
         </section>
 
-        {/* Pittsburgh Photo Showcase */}
+        {/* Pittsburgh Photo Gallery */}
         <section id="gallery" className="py-20 sm:py-32 bg-brand-reflex-blue relative overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
@@ -442,7 +426,7 @@ export function HomePage() {
             </motion.div>
 
             {/* Bento Grid Photo Gallery */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-12 sm:mb-16">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               {/* Large Featured Image */}
               <motion.div
                 className="col-span-2 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl sm:rounded-3xl"
@@ -493,123 +477,6 @@ export function HomePage() {
                 </motion.div>
               ))}
             </div>
-
-            {/* Call to Action */}
-            <motion.div
-              className="text-center mt-12 sm:mt-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <p className="text-white/60 mb-6 text-base sm:text-lg">{t('homepage.readyToCall', 'Ready to call Pittsburgh home?')}</p>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link
-                  to="/resources"
-                  className="inline-flex items-center gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-brand-pms-129 text-brand-reflex-blue rounded-full font-black uppercase tracking-[0.2em] text-sm hover:shadow-[0_0_60px_rgba(244,179,61,0.5)] transition-all duration-500"
-                >
-                  {t('homepage.exploreNeighborhoods', 'Explore Neighborhoods')}
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Footer CTA Section */}
-        <section className="relative bg-gradient-to-br from-brand-reflex-blue via-brand-reflex-blue to-brand-reflex-blue/90 py-20 sm:py-32 text-white overflow-hidden">
-          {/* Animated Background Elements */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-full h-full" style={{
-              backgroundImage: `radial-gradient(circle at 20% 50%, #F4B33D 0%, transparent 50%),
-                               radial-gradient(circle at 80% 80%, #F4B33D 0%, transparent 50%)`
-            }} />
-          </div>
-
-          {/* Geometric Pattern */}
-          <div className="absolute inset-0 opacity-[0.03]" style={{
-            backgroundImage: `repeating-linear-gradient(45deg, #F4B33D 0px, #F4B33D 2px, transparent 2px, transparent 50px),
-                             repeating-linear-gradient(-45deg, #F4B33D 0px, #F4B33D 2px, transparent 2px, transparent 50px)`
-          }} />
-
-          <div className="max-w-7xl mx-auto px-6 text-center space-y-12 sm:space-y-16 relative z-10">
-            {/* Logo */}
-            <motion.div
-              className="animate-fade-in"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <img
-                src="/branding/assets/logo-0.svg"
-                alt="Logo"
-                className="h-12 sm:h-14 w-auto mx-auto brightness-0 invert drop-shadow-[0_0_30px_rgba(244,179,61,0.3)]"
-              />
-            </motion.div>
-
-            {/* Main CTA */}
-            <motion.div
-              className="space-y-6 sm:space-y-8"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-serif font-black italic leading-[1] tracking-tight">
-                {t('homepage.readyToBecome', 'Ready to become')} <br />
-                <span className="bg-gradient-to-r from-white via-brand-pms-129 to-white bg-clip-text text-transparent">{t('homepage.aLocal', 'a local?')}</span>
-              </h2>
-              <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto font-light">
-                {t('homepage.joinThousands', 'Join thousands of newcomers who found their home in Pittsburgh with our free, comprehensive guide.')}
-              </p>
-            </motion.div>
-
-            {/* CTA Buttons */}
-            <motion.div
-              className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              viewport={{ once: true }}
-            >
-              <Link to="/screening" className="group relative overflow-hidden bg-gradient-to-r from-brand-pms-129 to-brand-pms-179 text-brand-reflex-blue px-12 sm:px-16 py-5 sm:py-7 rounded-full text-sm font-black uppercase tracking-[0.25em] hover:shadow-[0_0_80px_rgba(244,179,61,0.6)] transition-all duration-700 hover:scale-110">
-                <span className="relative z-10 flex items-center gap-3">
-                  {t('homepage.startYourJourney', 'Start Your Journey')}
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-500" />
-                </span>
-                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-              </Link>
-
-              <Link to="/about" className="group flex items-center gap-3 text-white/80 hover:text-white text-sm font-bold uppercase tracking-[0.2em] transition-colors duration-300">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white/30 group-hover:border-brand-pms-129 flex items-center justify-center group-hover:bg-brand-pms-129/10 transition-all duration-500">
-                  <Play className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5" />
-                </div>
-                {t('homepage.watchTheStory', 'Watch The Story')}
-              </Link>
-            </motion.div>
-
-            {/* Trust Indicators */}
-            <motion.div
-              className="grid grid-cols-3 gap-6 sm:gap-12 max-w-3xl mx-auto pt-12 sm:pt-16 border-t border-white/10"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <div className="space-y-2">
-                <div className="text-2xl sm:text-4xl font-serif font-black text-brand-pms-129">10k+</div>
-                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.3em] font-bold text-white/50">{t('homepage.familiesHelped', 'Families Helped')}</div>
-              </div>
-              <div className="space-y-2">
-                <div className="text-2xl sm:text-4xl font-serif font-black text-brand-pms-129">90</div>
-                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.3em] font-bold text-white/50">{t('homepage.neighborhoods', 'Neighborhoods')}</div>
-              </div>
-              <div className="space-y-2">
-                <div className="text-2xl sm:text-4xl font-serif font-black text-brand-pms-129">100%</div>
-                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.3em] font-bold text-white/50">{t('homepage.freeForever', 'Free Forever')}</div>
-              </div>
-            </motion.div>
           </div>
 
           {/* Bottom Accent Line */}

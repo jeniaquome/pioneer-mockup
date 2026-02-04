@@ -14,18 +14,18 @@ test.describe('Homepage Redesign', () => {
     await expect(page.locator('a[href="/resources"]').first()).toBeVisible();
   });
 
-  test('Begin Your Journey CTA links to screening', async ({ page }) => {
-    const beginJourneyBtn = page.locator('a[href="/screening"]').filter({ hasText: /Begin Your Journey/i });
-    await expect(beginJourneyBtn).toBeVisible();
+  test('Start Your Journey CTA links to screening', async ({ page }) => {
+    const startJourneyBtn = page.locator('a[href="/screening"]').filter({ hasText: /Start Your Journey/i });
+    await expect(startJourneyBtn).toBeVisible();
 
     // Click and verify navigation
-    await beginJourneyBtn.click();
+    await startJourneyBtn.click();
     await expect(page).toHaveURL(/\/screening/);
   });
 
-  test('Explore The Map CTA links to resources', async ({ page }) => {
-    const exploreMapBtn = page.locator('a[href="/resources"]').filter({ hasText: /Explore The Map/i });
-    await expect(exploreMapBtn).toBeVisible();
+  test('Watch The Story CTA links to about page', async ({ page }) => {
+    const watchStoryBtn = page.locator('a[href="/about"]').filter({ hasText: /Watch The Story/i });
+    await expect(watchStoryBtn).toBeVisible();
   });
 
   test('Mission section is accessible via scroll indicator', async ({ page }) => {
@@ -44,8 +44,8 @@ test.describe('Homepage Redesign', () => {
   });
 
   test('feature cards link to internal resources with correct category IDs', async ({ page }) => {
-    // Scroll to features section
-    await page.locator('#features').scrollIntoViewIfNeeded();
+    // Scroll to resources section
+    await page.locator('#resources').scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
 
     // Check feature card links are internal (start with /resources)
