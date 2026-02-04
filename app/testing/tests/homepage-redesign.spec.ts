@@ -11,7 +11,7 @@ test.describe('Homepage Redesign', () => {
 
     // Check hero section has main CTA buttons
     await expect(page.locator('a[href="/screening"]').first()).toBeVisible();
-    await expect(page.locator('a[href="/resources"]').first()).toBeVisible();
+    await expect(page.locator('a[href="#story"]').first()).toBeVisible();
   });
 
   test('Start Your Journey CTA links to screening', async ({ page }) => {
@@ -23,13 +23,13 @@ test.describe('Homepage Redesign', () => {
     await expect(page).toHaveURL(/\/screening/);
   });
 
-  test('Watch The Story CTA links to about page', async ({ page }) => {
-    const watchStoryBtn = page.locator('a[href="/about"]').filter({ hasText: /Watch The Story/i });
+  test('Watch The Story CTA links to story section', async ({ page }) => {
+    const watchStoryBtn = page.locator('a[href="#story"]').filter({ hasText: /Watch The Story/i });
     await expect(watchStoryBtn).toBeVisible();
   });
 
-  test('Mission section is accessible via scroll indicator', async ({ page }) => {
-    const scrollIndicator = page.locator('a[href="#mission"]');
+  test('Story section is accessible via scroll indicator', async ({ page }) => {
+    const scrollIndicator = page.locator('a[href="#story"]').first();
     await expect(scrollIndicator).toBeVisible();
 
     // Click scroll indicator (force click to bypass animation stability)
@@ -38,9 +38,9 @@ test.describe('Homepage Redesign', () => {
     // Wait for scroll animation
     await page.waitForTimeout(1000);
 
-    // Check mission section is visible
-    const missionSection = page.locator('#mission');
-    await expect(missionSection).toBeVisible();
+    // Check story section is visible
+    const storySection = page.locator('#story');
+    await expect(storySection).toBeVisible();
   });
 
   test('feature cards link to internal resources with correct category IDs', async ({ page }) => {
@@ -71,18 +71,14 @@ test.describe('Homepage Redesign', () => {
     }
   });
 
-  test('footer CTA buttons use internal routes', async ({ page }) => {
-    // Scroll to bottom
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  test('story section has Get Your Guide CTA', async ({ page }) => {
+    // Scroll to story section
+    await page.locator('#story').scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
 
-    // Check Start Your Journey button links to /screening
-    const startJourneyBtn = page.locator('a[href="/screening"]').filter({ hasText: /Start Your Journey/i });
-    await expect(startJourneyBtn).toBeVisible();
-
-    // Check Watch The Story button links to /about
-    const watchStoryBtn = page.locator('a[href="/about"]').filter({ hasText: /Watch The Story/i });
-    await expect(watchStoryBtn).toBeVisible();
+    // Check Get Your Guide button exists in story section
+    const getGuideBtn = page.locator('#story a[href="/screening"]').filter({ hasText: /Get Your Guide/i });
+    await expect(getGuideBtn).toBeVisible();
   });
 
   test('no external pittsburghpioneer.com links in visible navigation', async ({ page }) => {
@@ -123,5 +119,19 @@ test.describe('Homepage Redesign', () => {
         expect(isInternal).toBe(true);
       }
     }
+  });
+
+  test('story section displays Pioneer narrative content', async ({ page }) => {
+    // Scroll to story section
+    await page.locator('#story').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
+
+    // Check story section is visible
+    await expect(page.locator('#story')).toBeVisible();
+
+    // Check for key narrative elements
+    const storyText = await page.locator('#story').textContent();
+    expect(storyText).toContain('groundbreaking');
+    expect(storyText).toContain('platform');
   });
 });

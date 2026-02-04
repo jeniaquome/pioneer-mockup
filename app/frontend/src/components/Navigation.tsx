@@ -110,10 +110,9 @@ export function Navigation() {
 
   // Mockup-style navigation items for public users - links to page sections
   const publicNavItems = [
-    { label: t('nav.mission', 'THE MISSION'), to: '/#mission' },
+    { label: t('nav.story', 'THE STORY'), to: '/#story' },
     { label: t('nav.resources', 'RESOURCES'), to: '/#resources' },
     { label: t('nav.gallery', 'GALLERY'), to: '/#gallery' },
-    { label: t('nav.pioneerStory', 'THE PIONEER STORY'), to: '/about' },
   ]
 
   // Navigation items for authenticated users
