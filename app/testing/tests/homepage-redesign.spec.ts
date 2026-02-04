@@ -23,9 +23,9 @@ test.describe('Homepage Redesign', () => {
     await expect(page).toHaveURL(/\/screening/);
   });
 
-  test('Explore Resources CTA links to resources', async ({ page }) => {
-    const exploreResourcesBtn = page.locator('a[href="/resources"]').filter({ hasText: /Explore Resources/i });
-    await expect(exploreResourcesBtn).toBeVisible();
+  test('Explore The Map CTA links to resources', async ({ page }) => {
+    const exploreMapBtn = page.locator('a[href="/resources"]').filter({ hasText: /Explore The Map/i });
+    await expect(exploreMapBtn).toBeVisible();
   });
 
   test('Mission section is accessible via scroll indicator', async ({ page }) => {
@@ -43,7 +43,7 @@ test.describe('Homepage Redesign', () => {
     await expect(missionSection).toBeVisible();
   });
 
-  test('feature cards link to internal resources', async ({ page }) => {
+  test('feature cards link to internal resources with correct category IDs', async ({ page }) => {
     // Scroll to features section
     await page.locator('#features').scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
@@ -54,10 +54,21 @@ test.describe('Homepage Redesign', () => {
 
     expect(count).toBeGreaterThan(0);
 
-    // Verify first link is internal
-    const firstLink = featureLinks.first();
-    const href = await firstLink.getAttribute('href');
-    expect(href).toMatch(/^\/resources\//);
+    // Verify links use correct category IDs from taxonomy
+    const expectedCategories = [
+      'living-essentials',
+      'community-belonging',
+      'education-youth',
+      'esl-immigrant',
+      'work-business',
+      'culture-leisure'
+    ];
+
+    for (let i = 0; i < Math.min(count, expectedCategories.length); i++) {
+      const link = featureLinks.nth(i);
+      const href = await link.getAttribute('href');
+      expect(href).toContain(expectedCategories[i]);
+    }
   });
 
   test('footer CTA buttons use internal routes', async ({ page }) => {

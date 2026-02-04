@@ -16,22 +16,22 @@ import {
 
 // Brand colors for profile icons
 const PROFILE_COLORS = [
-  '#4987C6', 
+  '#4987C6',
 ]
 
 // Generate a consistent color based on user ID
 const getUserColor = (userId: string | number | undefined): string => {
   if (!userId) return PROFILE_COLORS[0]
-  
+
   // Convert to string if it's a number
   const userIdStr = String(userId)
-  
+
   // Simple hash function to convert user ID to a number
   let hash = 0
   for (let i = 0; i < userIdStr.length; i++) {
     hash = userIdStr.charCodeAt(i) + ((hash << 5) - hash)
   }
-  
+
   // Use the hash to select a color
   const index = Math.abs(hash) % PROFILE_COLORS.length
   return PROFILE_COLORS[index]
@@ -44,6 +44,19 @@ export function Navigation() {
   const { loginWithRedirect } = useAuth0()
   const { t } = useTranslation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  // Check if we're on the homepage for transparent header
+  const isHomePage = location.pathname === '/'
+
+  // Handle scroll for header background transition
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Sync localStorage with URL when on dashboard pages to maintain persistence
   useEffect(() => {
@@ -91,36 +104,35 @@ export function Navigation() {
     }
     return false
   }, [user?.role, location.pathname, location.search])
-  
+
   // Get consistent color for this user
   const profileColor = useMemo(() => getUserColor(user?.id), [user?.id])
 
-  // Navigation items for non-authenticated users
+  // Mockup-style navigation items for public users
   const publicNavItems = [
-    { label: t('nav.home'), to: '/' },
-    { label: t('nav.resources'), to: '/resources' },
-    { label: t('nav.about'), to: '/about' },
+    { label: t('nav.neighborhoods', 'NEIGHBORHOODS'), to: '/resources' },
+    { label: t('nav.gallery', 'GALLERY'), to: '/#gallery' },
+    { label: t('nav.resources', 'RESOURCES'), to: '/resources' },
+    { label: t('nav.pioneerStory', 'THE PIONEER STORY'), to: '/about' },
   ]
 
   // Navigation items for authenticated users
   const authenticatedNavItems = [
     { label: t('nav.dashboard'), to: '/dashboard' },
     { label: t('nav.bookmarks'), to: '/bookmarks' },
-    { label: t('nav.home'), to: '/' },
-    { label: t('nav.resources'), to: '/resources' },
-    { label: t('nav.about'), to: '/about' },
+    { label: t('nav.resources', 'RESOURCES'), to: '/resources' },
+    { label: t('nav.pioneerStory', 'THE PIONEER STORY'), to: '/about' },
   ]
 
   // Admin navigation items
   const adminNavItems = [
     { label: t('nav.adminDashboard'), to: '/dashboard' },
     { label: t('nav.bookmarks'), to: '/bookmarks' },
-    { label: t('nav.home'), to: '/' },
-    { label: t('nav.resources'), to: '/resources' },
-    { label: t('nav.about'), to: '/about' },
+    { label: t('nav.resources', 'RESOURCES'), to: '/resources' },
+    { label: t('nav.pioneerStory', 'THE PIONEER STORY'), to: '/about' },
   ]
 
-  const navItems = isAuthenticated 
+  const navItems = isAuthenticated
     ? (user?.role === 'admin' ? adminNavItems : authenticatedNavItems)
     : publicNavItems
 
@@ -148,21 +160,35 @@ export function Navigation() {
     setIsMobileMenuOpen(false)
   }
 
+  // Determine header styling based on page and scroll state
+  const headerClasses = isHomePage && !isScrolled && !isMobileMenuOpen
+    ? 'fixed top-0 left-0 right-0 z-50 bg-transparent backdrop-blur-none transition-all duration-500'
+    : 'fixed top-0 left-0 right-0 z-50 bg-brand-reflex-blue/95 backdrop-blur-md shadow-lg transition-all duration-500'
+
+  // Text color classes based on state
+  const textColorClass = isHomePage && !isScrolled && !isMobileMenuOpen
+    ? 'text-white'
+    : 'text-white'
+
+  const linkHoverClass = isHomePage && !isScrolled && !isMobileMenuOpen
+    ? 'hover:text-brand-pms-129'
+    : 'hover:text-brand-pms-129'
+
   return (
-    <header className="bg-white border-b-2 border-brand-pms-285 sticky top-0 z-50 shadow-sm">
-      <nav className="container mx-auto flex h-16 md:h-18 xl:h-20 items-center justify-between px-4 sm:px-6" data-nosnippet>
-        {/* Logo with proper clear space - 120% larger */}
-        <Link to="/" className="flex items-center group interactive-element py-1.5 xl:py-2 px-2 flex-shrink-0" onClick={closeMobileMenu}>
-          <img 
-            src="/branding/assets/logo-0.svg" 
-            alt="Pittsburgh Tomorrow Pioneer Logo" 
-            className="h-11 md:h-14 xl:h-24 w-auto object-contain hover:scale-105 transition-transform duration-200" 
-            style={{ minHeight: '43px', maxWidth: '312px' }}
+    <header className={headerClasses}>
+      <nav className="container mx-auto flex h-20 md:h-24 items-center justify-between px-6 lg:px-12" data-nosnippet>
+        {/* Logo - Use SVG logo with white filter on dark/transparent */}
+        <Link to="/" className="flex items-center group interactive-element flex-shrink-0" onClick={closeMobileMenu}>
+          <img
+            src="/branding/assets/logo-0.svg"
+            alt="Pittsburgh Tomorrow Pioneer Logo"
+            className="h-10 md:h-12 w-auto object-contain brightness-0 invert hover:opacity-90 transition-opacity duration-200"
+            style={{ minHeight: '40px', maxWidth: '280px' }}
           />
         </Link>
 
-        {/* Desktop Navigation - Only show on XL screens (1280px+) */}
-        <div className="hidden xl:flex items-center gap-8">
+        {/* Desktop Navigation - Only show on LG screens (1024px+) */}
+        <div className="hidden lg:flex items-center gap-10">
           {/* Main Navigation Links */}
           <ul className="flex gap-8 items-center">
             {navItems.map((item) => {
@@ -183,21 +209,16 @@ export function Navigation() {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button
-                            className={
-                              'brand-accent font-medium px-4 py-2 rounded-md transition-all duration-200 interactive-element whitespace-nowrap flex items-center gap-1 ' +
-                              (isActive
-                                ? 'text-white bg-brand-reflex-blue shadow-md'
-                                : 'text-brand-reflex-blue hover:text-white hover:bg-brand-pms-285 hover:shadow-md')
-                            }
+                            className={`text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300 interactive-element whitespace-nowrap flex items-center gap-1 ${textColorClass} ${linkHoverClass}`}
                             id={`nav-link-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
                           >
                             {currentLabel}
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
                           </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="w-48">
+                        <DropdownMenuContent align="start" className="w-48 bg-brand-reflex-blue border-white/10">
                           <DropdownMenuItem
                             onClick={() => {
                               // Update localStorage to persist the view choice
@@ -205,7 +226,7 @@ export function Navigation() {
                               localStorage.setItem('admin-dashboard-view', newView)
                               navigate(targetPath)
                             }}
-                            className="cursor-pointer"
+                            className="cursor-pointer text-white hover:text-brand-pms-129 hover:bg-white/10"
                           >
                             {targetLabel}
                           </DropdownMenuItem>
@@ -217,7 +238,7 @@ export function Navigation() {
                   // Show regular link when not on dashboard pages
                   // Use isViewingPersonalizedDashboard (which checks localStorage) to determine label and navigation
                   const linkLabel = isViewingPersonalizedDashboard ? t('nav.dashboard') : t('nav.adminDashboard')
-                  
+
                   return (
                     <li key={item.to}>
                       <button
@@ -229,10 +250,7 @@ export function Navigation() {
                             navigate('/dashboard')
                           }
                         }}
-                        className={
-                          'brand-accent font-medium px-4 py-2 rounded-md transition-all duration-200 interactive-element whitespace-nowrap ' +
-                          'text-brand-reflex-blue hover:text-white hover:bg-brand-pms-285 hover:shadow-md bg-transparent border-none cursor-pointer'
-                        }
+                        className={`text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300 interactive-element whitespace-nowrap ${textColorClass} ${linkHoverClass} bg-transparent border-none cursor-pointer`}
                         id={`nav-link-admin-dashboard`}
                       >
                         {linkLabel}
@@ -241,17 +259,12 @@ export function Navigation() {
                   )
                 }
               }
-              
+
               return (
                 <li key={item.to}>
                   <Link
                     to={item.to}
-                    className={
-                      'brand-accent font-medium px-4 py-2 rounded-md transition-all duration-200 interactive-element whitespace-nowrap ' +
-                      ((item.to === '/dashboard' && location.pathname.startsWith('/dashboard')) || location.pathname === item.to
-                        ? 'text-white bg-brand-reflex-blue shadow-md' 
-                        : 'text-brand-reflex-blue hover:text-white hover:bg-brand-pms-285 hover:shadow-md')
-                    }
+                    className={`text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-300 interactive-element whitespace-nowrap ${textColorClass} ${linkHoverClass}`}
                     aria-current={((item.to === '/dashboard' && location.pathname.startsWith('/dashboard')) || location.pathname === item.to) ? 'page' : undefined}
                     id={`nav-link-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
                   >
@@ -263,45 +276,42 @@ export function Navigation() {
           </ul>
 
           {/* Language Selector */}
-          <div className="scale-95 origin-center">
+          <div className="scale-90 origin-center">
             <LanguageSelector />
           </div>
 
-          
-
           {/* Authentication Section */}
           {!isLoading && (
-            <div className="flex items-center gap-4 border-l-2 border-brand-pms-290 pl-6">
+            <div className="flex items-center gap-4">
               {isAuthenticated && user ? (
                 // Authenticated User Menu
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center gap-3 h-10 px-3 interactive-element hover:bg-brand-pms-290 rounded-lg">
+                    <Button variant="ghost" className={`flex items-center gap-3 h-10 px-3 interactive-element hover:bg-white/10 rounded-lg ${textColorClass}`}>
                       <div className="w-9 h-9 rounded-full flex items-center justify-center shadow-sm" style={{ backgroundColor: profileColor }}>
                         <User className="h-5 w-5 text-white" />
                       </div>
-                      <div className="text-left">
-                        <div className="text-sm font-medium text-brand-reflex-blue brand-accent">
+                      <div className="text-left hidden xl:block">
+                        <div className="text-sm font-medium">
                           {user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.username}
                         </div>
-                        <div className="text-xs text-gray-600 brand-accent">{user.email}</div>
                       </div>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 shadow-lg border-brand-pms-290">
+                  <DropdownMenuContent align="end" className="w-56 shadow-lg bg-brand-reflex-blue border-white/10">
                     <div className="px-3 py-2">
-                      <p className="text-sm font-medium text-brand-reflex-blue brand-accent">{user.username}</p>
-                      <p className="text-xs text-gray-600 brand-accent">{user.email}</p>
+                      <p className="text-sm font-medium text-white">{user.username}</p>
+                      <p className="text-xs text-white/60">{user.email}</p>
                     </div>
-                    <DropdownMenuSeparator />
+                    <DropdownMenuSeparator className="bg-white/10" />
                     <DropdownMenuItem asChild>
-                      <Link to="/profile" className="flex items-center gap-2 text-brand-reflex-blue hover:bg-brand-pms-290 interactive-element">
+                      <Link to="/profile" className="flex items-center gap-2 text-white hover:text-brand-pms-129 hover:bg-white/10 interactive-element">
                         <Settings className="h-4 w-4" />
                         {t('nav.accountSettings')}
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-brand-pms-179 hover:bg-red-50 interactive-element">
+                    <DropdownMenuSeparator className="bg-white/10" />
+                    <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-300 hover:text-red-200 hover:bg-red-500/10 interactive-element">
                       <LogOut className="h-4 w-4" />
                       {t('nav.signOut')}
                     </DropdownMenuItem>
@@ -309,21 +319,12 @@ export function Navigation() {
                 </DropdownMenu>
               ) : (
                 <div className="flex items-center gap-4">
-                <Button 
-                  className="touch-target px-5 py-2 shadow-md hover:shadow-lg transition-all duration-200 text-white font-medium text-sm md:text-base hover:scale-105"
-                    style={{ backgroundColor: '#2E3192' }}
-                    onClick={handleLogin}
-                  >
-                    {t('nav.signIn')}
-                  </Button>
-                  {/* Get Started CTA - to the right of Login, only when not authenticated */}
+                  {/* Get Your Guide CTA - Mockup style */}
                   <Link to="/screening" className="interactive-element">
                     <Button
-                      size="sm"
-                      className="bg-brand-pms-267 hover:bg-brand-pms-265 text-white font-brand-accent font-extrabold shadow-none transition-colors duration-200 px-4 text-sm md:text-base touch-target"
-                      style={{ textTransform: 'capitalize' }}
+                      className="bg-brand-pms-129 hover:bg-brand-pms-179 text-brand-reflex-blue font-black uppercase tracking-[0.15em] text-[11px] px-6 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                     >
-                      {t('homepage.getStarted')}
+                      {t('nav.getYourGuide', 'GET YOUR GUIDE')}
                     </Button>
                   </Link>
                 </div>
@@ -332,54 +333,54 @@ export function Navigation() {
           )}
         </div>
 
-        {/* Mobile/Tablet Menu Button and Quick Actions - Show up to XL screens */}
-        <div className="xl:hidden flex items-center gap-1 md:gap-3">
-          {/* Hamburger Menu Button - Left side for better thumb reach */}
+        {/* Mobile/Tablet Menu Button and Quick Actions - Show up to LG screens */}
+        <div className="lg:hidden flex items-center gap-3">
+          <LanguageSelector />
+
+          {/* Hamburger Menu Button */}
           <Button
             variant="ghost"
             size="sm"
-            className="p-2 md:p-3 hover:bg-brand-pms-285 rounded-lg interactive-element touch-target flex-shrink-0"
+            className={`p-2 md:p-3 hover:bg-white/10 rounded-lg interactive-element touch-target flex-shrink-0 ${textColorClass}`}
             onClick={toggleMobileMenu}
             aria-label={t('common.toggleMobileMenu')}
             style={{ minWidth: '44px', minHeight: '44px' }}
           >
             {isMobileMenuOpen ? (
-              <X className="h-5 w-5 md:h-6 md:w-6 text-brand-reflex-blue hover:text-white" />
+              <X className="h-6 w-6" />
             ) : (
-              <Menu className="h-5 w-5 md:h-6 md:w-6 text-brand-reflex-blue hover:text-white" />
+              <Menu className="h-6 w-6" />
             )}
           </Button>
 
-          <LanguageSelector />
-          
           {/* Mobile User Menu for authenticated users - separate dropdown */}
           {!isLoading && isAuthenticated && user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="flex items-center gap-2 interactive-element hover:bg-brand-pms-290 rounded-lg p-2 md:p-3 touch-target flex-shrink-0"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`flex items-center gap-2 interactive-element hover:bg-white/10 rounded-lg p-2 md:p-3 touch-target flex-shrink-0`}
                   style={{ minWidth: '44px', minHeight: '44px' }}
                 >
-                  <div className="w-7 h-7 md:w-10 md:h-10 bg-brand-pms-285 rounded-full flex items-center justify-center">
-                    <User className="h-4 w-4 md:h-5 md:w-5 text-white" />
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: profileColor }}>
+                    <User className="h-4 w-4 text-white" />
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 shadow-lg">
+              <DropdownMenuContent align="end" className="w-48 shadow-lg bg-brand-reflex-blue border-white/10">
                 <div className="px-3 py-2">
-                  <p className="text-sm font-medium text-brand-reflex-blue brand-accent">{user.username}</p>
-                  <p className="text-xs text-gray-600 brand-accent">{user.email}</p>
+                  <p className="text-sm font-medium text-white">{user.username}</p>
+                  <p className="text-xs text-white/60">{user.email}</p>
                 </div>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-white/10" />
                 <DropdownMenuItem asChild>
-                  <Link to="/profile" className="flex items-center gap-2 text-brand-reflex-blue hover:bg-brand-pms-290 interactive-element">
+                  <Link to="/profile" className="flex items-center gap-2 text-white hover:text-brand-pms-129 hover:bg-white/10 interactive-element">
                     <Settings className="h-4 w-4" />
                     {t('nav.settings')}
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-brand-pms-179 hover:bg-red-50 interactive-element">
+                <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-300 hover:text-red-200 hover:bg-red-500/10 interactive-element">
                   <LogOut className="h-4 w-4" />
                   {t('nav.signOut')}
                 </DropdownMenuItem>
@@ -389,28 +390,27 @@ export function Navigation() {
         </div>
       </nav>
 
-      {/* Mobile/Tablet Menu - Show up to XL screens */}
+      {/* Mobile/Tablet Menu - Show up to LG screens */}
       {isMobileMenuOpen && (
-        <div className="xl:hidden bg-white border-t border-brand-pms-285 shadow-lg" data-nosnippet>
-          <div className="container mx-auto px-4 py-4">
-              {/* Mobile menu Get Started CTA (hidden when authenticated) */}
-              {!isAuthenticated && (
-                <div className="mb-3">
-                  <Link
-                    to="/screening"
-                    onClick={closeMobileMenu}
-                    className="block w-full"
+        <div className="lg:hidden bg-brand-reflex-blue/95 backdrop-blur-md border-t border-white/10 shadow-lg" data-nosnippet>
+          <div className="container mx-auto px-6 py-6">
+            {/* Mobile menu Get Your Guide CTA (hidden when authenticated) */}
+            {!isAuthenticated && (
+              <div className="mb-6">
+                <Link
+                  to="/screening"
+                  onClick={closeMobileMenu}
+                  className="block w-full"
+                >
+                  <button
+                    className="w-full bg-brand-pms-129 hover:bg-brand-pms-179 text-brand-reflex-blue font-black uppercase tracking-[0.15em] text-sm rounded-full px-6 py-4 shadow-lg transition-all duration-300 touch-target"
                   >
-                    <button
-                      className="w-full bg-brand-pms-267 hover:bg-brand-pms-265 text-white font-brand-accent font-extrabold rounded-md px-4 py-3 shadow-none transition-colors duration-200 touch-target"
-                      style={{ textTransform: 'capitalize' }}
-                    >
-                      {t('homepage.getStarted')}
-                    </button>
-                  </Link>
-                </div>
-              )}
-            <ul className="space-y-2">
+                    {t('nav.getYourGuide', 'GET YOUR GUIDE')}
+                  </button>
+                </Link>
+              </div>
+            )}
+            <ul className="space-y-1">
               {navItems.map((item) => {
                 // Special handling for Admin Dashboard - conditional dropdown
                 if (item.label === t('nav.adminDashboard') && user?.role === 'admin') {
@@ -429,12 +429,7 @@ export function Navigation() {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button
-                              className={
-                                'w-full px-4 py-3 rounded-md text-left brand-accent font-medium transition-all duration-200 interactive-element whitespace-nowrap flex items-center justify-between ' +
-                                (isActive
-                                  ? 'text-white bg-brand-reflex-blue shadow-md'
-                                  : 'text-brand-reflex-blue hover:text-white hover:bg-brand-pms-285')
-                              }
+                              className="w-full px-4 py-4 rounded-lg text-left text-white text-[12px] font-black uppercase tracking-[0.2em] transition-all duration-200 interactive-element whitespace-nowrap flex items-center justify-between hover:bg-white/10"
                               style={{ minHeight: '44px' }}
                             >
                               {currentLabel}
@@ -443,7 +438,7 @@ export function Navigation() {
                               </svg>
                             </button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" className="w-48">
+                          <DropdownMenuContent align="start" className="w-48 bg-brand-reflex-blue border-white/10">
                             <DropdownMenuItem
                               onClick={() => {
                                 // Update localStorage to persist the view choice
@@ -452,7 +447,7 @@ export function Navigation() {
                                 navigate(targetPath)
                                 closeMobileMenu()
                               }}
-                              className="cursor-pointer"
+                              className="cursor-pointer text-white hover:text-brand-pms-129 hover:bg-white/10"
                             >
                               {targetLabel}
                             </DropdownMenuItem>
@@ -464,7 +459,7 @@ export function Navigation() {
                     // Show regular link when not on dashboard pages
                     // Use isViewingPersonalizedDashboard (which checks localStorage) to determine label and navigation
                     const linkLabel = isViewingPersonalizedDashboard ? t('nav.dashboard') : t('nav.adminDashboard')
-                    
+
                     return (
                       <li key={item.to}>
                         <button
@@ -477,10 +472,7 @@ export function Navigation() {
                             }
                             closeMobileMenu()
                           }}
-                          className={
-                            'block w-full px-4 py-3 rounded-md text-left brand-accent font-medium transition-all duration-200 interactive-element whitespace-nowrap ' +
-                            'text-brand-reflex-blue hover:text-white hover:bg-brand-pms-285 bg-transparent border-none cursor-pointer'
-                          }
+                          className="block w-full px-4 py-4 rounded-lg text-left text-white text-[12px] font-black uppercase tracking-[0.2em] transition-all duration-200 interactive-element whitespace-nowrap hover:bg-white/10 bg-transparent border-none cursor-pointer"
                           style={{ minHeight: '44px' }}
                         >
                           {linkLabel}
@@ -489,18 +481,13 @@ export function Navigation() {
                     )
                   }
                 }
-                
+
                 return (
                   <li key={item.to}>
                     <Link
                       to={item.to}
                       onClick={closeMobileMenu}
-                      className={
-                        'block w-full px-4 py-3 rounded-md text-left brand-accent font-medium transition-all duration-200 interactive-element whitespace-nowrap ' +
-                        ((item.to === '/dashboard' && location.pathname.startsWith('/dashboard')) || location.pathname === item.to
-                          ? 'text-white bg-brand-reflex-blue shadow-md' 
-                          : 'text-brand-reflex-blue hover:text-white hover:bg-brand-pms-285')
-                      }
+                      className="block w-full px-4 py-4 rounded-lg text-left text-white text-[12px] font-black uppercase tracking-[0.2em] transition-all duration-200 interactive-element whitespace-nowrap hover:bg-white/10 hover:text-brand-pms-129"
                       style={{ minHeight: '44px' }}
                     >
                       {item.label}
@@ -512,14 +499,13 @@ export function Navigation() {
 
             {/* Mobile Menu Auth Button for non-authenticated users only */}
             {!isAuthenticated && (
-              <div className="mt-6 pt-4 border-t border-brand-pms-290">
-                <button 
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <button
                   onClick={() => {
                     closeMobileMenu()
                     handleLogin()
-                  }} 
-                  className="w-full touch-target text-center py-3 rounded-md text-white font-medium text-base shadow-md hover:shadow-lg transition-all duration-200"
-                  style={{ backgroundColor: '#2E3192' }}
+                  }}
+                  className="w-full touch-target text-center py-4 rounded-full text-white text-[12px] font-black uppercase tracking-[0.2em] border-2 border-white/30 hover:bg-white/10 hover:border-white/50 transition-all duration-200"
                 >
                   {t('nav.signIn')}
                 </button>

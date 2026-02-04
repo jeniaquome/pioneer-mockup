@@ -119,8 +119,8 @@ export function HomePage() {
         {/* Grain Texture Overlay */}
         <div className="fixed inset-0 pointer-events-none z-[150] opacity-[0.015] mix-blend-overlay grain-texture" />
 
-        {/* Cinematic Hero Section */}
-        <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Cinematic Hero Section - pt-24 to account for fixed nav */}
+        <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24">
           {/* Animated Gradient Mesh Background */}
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-gradient-to-b from-brand-reflex-blue via-brand-reflex-blue/80 to-black opacity-40 z-[5]" />
@@ -191,15 +191,15 @@ export function HomePage() {
               </p>
 
               <div className="flex flex-col md:flex-row gap-5 justify-center animate-fade-in delay-700">
-                <Link to="/screening" className="group relative overflow-hidden bg-gradient-to-r from-brand-pms-129 via-brand-pms-179 to-brand-pms-129 text-brand-reflex-blue px-12 py-6 rounded-full text-sm font-black uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:shadow-[0_0_60px_rgba(244,179,61,0.6)] transition-all duration-500 hover:scale-105 bg-[length:200%_100%] hover:bg-[position:100%_0]">
+                <Link to="/screening" className="group relative overflow-hidden bg-brand-pms-129 text-brand-reflex-blue px-12 py-5 rounded-sm text-[11px] font-black uppercase tracking-[0.25em] flex items-center justify-center gap-4 hover:shadow-[0_0_60px_rgba(244,179,61,0.6)] transition-all duration-500 hover:scale-105">
                   <span className="relative z-10">{t('homepage.beginJourney', 'Begin Your Journey')}</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-500 relative z-10" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-500 relative z-10" />
                   <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </Link>
-                <Link to="/resources" className="group px-12 py-6 rounded-full text-sm font-black uppercase tracking-[0.2em] text-white border-2 border-white/30 backdrop-blur-xl hover:bg-white/20 hover:border-white/60 transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] relative overflow-hidden">
+                <Link to="/resources" className="group px-12 py-5 rounded-sm text-[11px] font-black uppercase tracking-[0.25em] text-white border-2 border-white/40 backdrop-blur-xl hover:bg-white/10 hover:border-white/70 transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] relative overflow-hidden">
                   <span className="relative z-10 flex items-center gap-3">
-                    <BookOpen className="w-5 h-5" />
-                    {t('homepage.exploreResources', 'Explore Resources')}
+                    <MapPin className="w-4 h-4" />
+                    {t('homepage.exploreMap', 'Explore The Map')}
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                 </Link>
@@ -358,12 +358,12 @@ export function HomePage() {
             {/* Feature Cards Grid */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {[
-                { title: t('homepage.featureLiving', 'Living Essentials'), icon: <Home />, desc: t('homepage.featureLivingDesc', 'Housing, utilities, healthcare, and everything you need to settle in.'), color: 'from-blue-500/10 to-blue-600/5', link: '/resources/housing' },
-                { title: t('homepage.featureCommunity', 'Community And Belonging'), icon: <Users />, desc: t('homepage.featureCommunityDesc', 'Find your faith, your hobby, and your local neighborhood council.'), color: 'from-purple-500/10 to-purple-600/5', link: '/resources/community' },
-                { title: t('homepage.featureEducation', 'Education: Adult And Youth'), icon: <BookOpen />, desc: t('homepage.featureEducationDesc', 'Navigating the Pittsburgh school system with ease.'), color: 'from-green-500/10 to-green-600/5', link: '/resources/education' },
-                { title: t('homepage.featureESL', 'ESL And Immigrant Support'), icon: <Globe />, desc: t('homepage.featureESLDesc', 'Connecting you with local translators and ESL programs.'), color: 'from-orange-500/10 to-orange-600/5', link: '/resources/language' },
-                { title: t('homepage.featureJobs', 'Jobs And Business Resources'), icon: <CheckCircle2 />, desc: t('homepage.featureJobsDesc', 'Career services, job boards, and business resources.'), color: 'from-pink-500/10 to-pink-600/5', link: '/resources/employment' },
-                { title: t('homepage.featureCulture', 'Culture, Arts And Fun'), icon: <MapPin />, desc: t('homepage.featureCultureDesc', 'Museums, events, parks, and entertainment in the Steel City.'), color: 'from-teal-500/10 to-teal-600/5', link: '/resources/social' },
+                { title: t('homepage.featureLiving', 'Living Essentials'), icon: <Home />, desc: t('homepage.featureLivingDesc', 'Housing, utilities, healthcare, and everything you need to settle in.'), color: 'from-blue-500/10 to-blue-600/5', link: '/resources/living-essentials' },
+                { title: t('homepage.featureCommunity', 'Community And Belonging'), icon: <Users />, desc: t('homepage.featureCommunityDesc', 'Find your faith, your hobby, and your local neighborhood council.'), color: 'from-purple-500/10 to-purple-600/5', link: '/resources/community-belonging' },
+                { title: t('homepage.featureEducation', 'Education: Adult And Youth'), icon: <BookOpen />, desc: t('homepage.featureEducationDesc', 'Navigating the Pittsburgh school system with ease.'), color: 'from-green-500/10 to-green-600/5', link: '/resources/education-youth' },
+                { title: t('homepage.featureESL', 'ESL And Immigrant Support'), icon: <Globe />, desc: t('homepage.featureESLDesc', 'Connecting you with local translators and ESL programs.'), color: 'from-orange-500/10 to-orange-600/5', link: '/resources/esl-immigrant' },
+                { title: t('homepage.featureJobs', 'Jobs And Business Resources'), icon: <CheckCircle2 />, desc: t('homepage.featureJobsDesc', 'Career services, job boards, and business resources.'), color: 'from-pink-500/10 to-pink-600/5', link: '/resources/work-business' },
+                { title: t('homepage.featureCulture', 'Culture, Arts And Fun'), icon: <MapPin />, desc: t('homepage.featureCultureDesc', 'Museums, events, parks, and entertainment in the Steel City.'), color: 'from-teal-500/10 to-teal-600/5', link: '/resources/culture-leisure' },
               ].map((item, idx) => (
                 <motion.div
                   key={idx}
