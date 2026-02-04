@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import {
   ArrowRight,
   MapPin,
@@ -8,8 +9,25 @@ import {
   CheckCircle2,
   Globe,
   Play,
-  Sparkles
+  Sparkles,
+  Camera
 } from 'lucide-react';
+
+// Pittsburgh photos from public folder
+const pittsburghPhotos = [
+  { src: '/Copy of downtownfrombridge-unsplash.jpg', title: 'Downtown from the Bridge', location: 'Point State Park' },
+  { src: '/Copy of AdobeStock_436357547yellowbridgewithwhitesky.jpeg', title: 'Iconic Yellow Bridge', location: 'Roberto Clemente Bridge' },
+  { src: '/Copy of jason-pischke-YfoxivJxNT4-yellowbridgeatnight.jpg', title: 'City Lights', location: 'North Shore' },
+  { src: '/Copy of yosselin-artavia-RKH2ws90pMI-unsplashriversunsetpittsburghdowntownviewacrosswater.jpg', title: 'Golden Hour', location: 'Three Rivers' },
+  { src: '/Copy of zhen-yao-is1I1XTI4NU-unsplashcitybluewithlightslitupatnightbridgescrossingriver.jpg', title: 'Bridges at Night', location: 'Allegheny River' },
+  { src: '/Copy of AdobeStock_371672182_yellow_bridge.jpeg', title: 'Steel City Pride', location: 'Andy Warhol Bridge' },
+  { src: '/Copy of jocelyn-allen-AgpI111Z4Ys-unsplashPGAplacewithyellowbridgecuttinginfront.jpg', title: 'PPG Place', location: 'Downtown' },
+  { src: '/Copy of willie-shaw-64iuIOektb4-unsplashyellowbridgeroadviewwithsunshiningthrough.jpg', title: 'Morning Light', location: 'Fort Duquesne Bridge' },
+  { src: '/Copy of AdobeStock_392745144PPGplaceglass_building.jpeg', title: 'Glass Castle', location: 'PPG Place' },
+  { src: '/Copy of jimmy-woo-l4pVJ4zzwt0-unsplashaspinwallpittsburghneighborhoodhillview.jpg', title: 'Neighborhood Views', location: 'Aspinwall' },
+  { src: '/Copy of nathan-kelly-U3eEA6puoA4-unsplashschenleyparkbridgepillarsforestunderrustygreenbridge.jpg', title: 'Hidden Gems', location: 'Schenley Park' },
+  { src: '/Copy of jocelyn-allen-0Orb6gDDn4g-unsplashriverwithskyreflectedonwater.jpg', title: 'Reflections', location: 'Ohio River' },
+];
 
 const App = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -95,7 +113,7 @@ const App = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-[#003366]/50 to-white z-10" />
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMDMiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20 z-[8]" />
           <img
-            src="https://images.unsplash.com/photo-1520699216759-46e7f129993e?auto=format&fit=crop&q=80&w=2560"
+            src="/Copy of yosselin-artavia-RKH2ws90pMI-unsplashriversunsetpittsburghdowntownviewacrosswater.jpg"
             alt="Pittsburgh Three Rivers Sunrise"
             className="w-full h-full object-cover opacity-90"
           />
@@ -195,8 +213,8 @@ const App = () => {
              <div className="absolute bottom-8 right-8 w-12 h-12 border-r-4 border-b-4 border-[#FFB81C] opacity-0 group-hover:opacity-100 transition-all duration-700 z-20" />
 
              <img
-               src="https://images.unsplash.com/photo-1542332213-31f87348057f?auto=format&fit=crop&q=80&w=1200"
-               alt="Vibrant Strip District"
+               src="/Copy of AdobeStock_392745144PPGplaceglass_building.jpeg"
+               alt="PPG Place Pittsburgh"
                className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110 group-hover:rotate-1"
              />
              <div className="absolute inset-0 bg-gradient-to-br from-[#003366]/30 via-transparent to-[#FFB81C]/20 group-hover:opacity-0 transition-opacity duration-700" />
@@ -205,9 +223,9 @@ const App = () => {
              <div className="absolute bottom-12 left-12 text-white transform translate-y-0 group-hover:translate-y-[-8px] transition-transform duration-700">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-8 h-[2px] bg-[#FFB81C]" />
-                  <span className="text-[9px] uppercase tracking-[0.3em] font-black">The Strip District Market</span>
+                  <span className="text-[9px] uppercase tracking-[0.3em] font-black">PPG Place • Downtown</span>
                 </div>
-                <h4 className="text-3xl font-serif italic drop-shadow-lg">Where the city comes alive.</h4>
+                <h4 className="text-3xl font-serif italic drop-shadow-lg">Where glass meets steel.</h4>
              </div>
           </div>
 
@@ -282,12 +300,12 @@ const App = () => {
            {/* Feature Cards Grid */}
            <div className="grid md:grid-cols-3 gap-8">
               {[
-                { title: 'Housing', icon: <Home />, desc: 'Vetted neighborhoods and rental guides tailored to your work life.', color: 'from-blue-500/10 to-blue-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#housing' },
-                { title: 'Education', icon: <BookOpen />, desc: 'Navigating the Pittsburgh school system with ease.', color: 'from-purple-500/10 to-purple-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#education' },
-                { title: 'Community', icon: <Users />, desc: 'Find your faith, your hobby, and your local neighborhood council.', color: 'from-green-500/10 to-green-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#community' },
-                { title: 'Language', icon: <Globe />, desc: 'Connecting you with local translators and ESL programs.', color: 'from-orange-500/10 to-orange-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#language' },
-                { title: 'Settling In', icon: <CheckCircle2 />, desc: 'Utilities, DMV, and the technicalities of moving made simple.', color: 'from-pink-500/10 to-pink-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#settling-in' },
-                { title: 'Neighborhoods', icon: <MapPin />, desc: 'Deep dives into the 90 unique neighborhoods of our city.', color: 'from-teal-500/10 to-teal-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#neighborhoods' },
+                { title: 'Living Essentials', icon: <Home />, desc: 'Housing, utilities, healthcare, and everything you need to settle in.', color: 'from-blue-500/10 to-blue-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#housing' },
+                { title: 'Community And Belonging', icon: <Users />, desc: 'Find your faith, your hobby, and your local neighborhood council.', color: 'from-purple-500/10 to-purple-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#community' },
+                { title: 'Education: Adult And Youth', icon: <BookOpen />, desc: 'Navigating the Pittsburgh school system with ease.', color: 'from-green-500/10 to-green-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#education' },
+                { title: 'ESL And Immigrant Support', icon: <Globe />, desc: 'Connecting you with local translators and ESL programs.', color: 'from-orange-500/10 to-orange-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#language' },
+                { title: 'Jobs And Business Resources', icon: <CheckCircle2 />, desc: 'Career services, job boards, and business resources.', color: 'from-pink-500/10 to-pink-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#settling-in' },
+                { title: 'Culture, Arts And Fun', icon: <MapPin />, desc: 'Museums, events, parks, and entertainment in the Steel City.', color: 'from-teal-500/10 to-teal-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#neighborhoods' },
               ].map((item, idx) => (
                 <a
                   key={idx}
@@ -326,6 +344,148 @@ const App = () => {
                 </a>
               ))}
            </div>
+        </div>
+      </section>
+
+      {/* Pittsburgh Photo Showcase */}
+      <section className="py-32 bg-[#003366] relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 25% 25%, #FFB81C 1px, transparent 1px),
+                             radial-gradient(circle at 75% 75%, #FFB81C 1px, transparent 1px)`,
+            backgroundSize: '60px 60px'
+          }} />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          {/* Section Header */}
+          <motion.div
+            className="text-center mb-20"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-8">
+              <Camera className="w-4 h-4 text-[#FFB81C]" />
+              <span className="text-[9px] uppercase tracking-[0.3em] font-black text-white/80">Explore the City</span>
+            </div>
+            <h3 className="text-5xl md:text-7xl font-serif font-black text-white tracking-tight mb-6">
+              Discover <span className="text-[#FFB81C]">Pittsburgh</span>
+            </h3>
+            <p className="text-lg text-white/60 max-w-2xl mx-auto font-light">
+              From iconic bridges to hidden neighborhoods, experience the beauty of the Steel City
+            </p>
+          </motion.div>
+
+          {/* Bento Grid Photo Gallery */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+            {/* Large Featured Image */}
+            <motion.div
+              className="col-span-2 row-span-2 relative group cursor-pointer overflow-hidden rounded-3xl"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.02 }}
+            >
+              <img
+                src={pittsburghPhotos[0].src}
+                alt={pittsburghPhotos[0].title}
+                className="w-full h-full object-cover aspect-square transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <motion.div
+                className="absolute bottom-6 left-6 text-white"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[#FFB81C] mb-1">{pittsburghPhotos[0].location}</p>
+                <h4 className="text-2xl font-serif font-bold">{pittsburghPhotos[0].title}</h4>
+              </motion.div>
+            </motion.div>
+
+            {/* Smaller Grid Images */}
+            {pittsburghPhotos.slice(1, 5).map((photo, idx) => (
+              <motion.div
+                key={idx}
+                className="relative group cursor-pointer overflow-hidden rounded-2xl aspect-square"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ scale: 1.05, zIndex: 10 }}
+              >
+                <img
+                  src={photo.src}
+                  alt={photo.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+                  <p className="text-[8px] uppercase tracking-[0.2em] text-[#FFB81C]">{photo.location}</p>
+                  <h4 className="text-sm font-bold">{photo.title}</h4>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Horizontal Scrolling Marquee */}
+          <div className="relative overflow-hidden py-8">
+            <motion.div
+              className="flex gap-6"
+              animate={{ x: [0, -1920] }}
+              transition={{
+                duration: 30,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            >
+              {[...pittsburghPhotos, ...pittsburghPhotos].map((photo, idx) => (
+                <motion.div
+                  key={idx}
+                  className="relative flex-shrink-0 w-80 h-48 rounded-2xl overflow-hidden group cursor-pointer"
+                  whileHover={{ scale: 1.05, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <img
+                    src={photo.src}
+                    alt={photo.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <p className="text-[8px] uppercase tracking-[0.2em] text-[#FFB81C]">{photo.location}</p>
+                    <h4 className="text-sm font-bold">{photo.title}</h4>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Call to Action */}
+          <motion.div
+            className="text-center mt-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <p className="text-white/60 mb-6 text-lg">Ready to call Pittsburgh home?</p>
+            <motion.a
+              href="https://www.pittsburghpioneer.com/resources"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 px-10 py-5 bg-[#FFB81C] text-[#003366] rounded-full font-black uppercase tracking-[0.2em] text-sm hover:shadow-[0_0_60px_rgba(255,184,28,0.5)] transition-all duration-500"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Explore Neighborhoods
+              <ArrowRight className="w-5 h-5" />
+            </motion.a>
+          </motion.div>
         </div>
       </section>
 
