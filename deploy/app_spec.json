@@ -1,0 +1,40 @@
+{
+  "name": "pioneer",
+  "spec": {
+    "port": 8000,
+    "containers": [
+      {
+        "image": "",
+        "name": "pioneer",
+        "port": 8000,
+        "secret_vars": {
+          "DATABASE_URL": "pioneer-database-url",
+          "GOOGLE_API_KEY": "pioneer-google-api-key"
+        },
+        "env_vars": {
+          "INIT_DEMO_DATA": "false",
+          "INIT_DEMO_USERS": "true",
+          "INIT_DEMO_DATA_MODE": "no-resources",
+          "REDIS_URL": "redis://0.0.0.0:6379"
+        },
+        "registry_secret": "pioneer-docker-credentials"
+      },
+      {
+        "image": "redis:7-alpine",
+        "name": "pioneer-redis",
+        "port": 6379,
+        "tmp_dirs": [
+          "/data"
+        ],
+        "args": [
+          "redis-server",
+          "--save",
+          "60",
+          "1",
+          "--loglevel",
+          "verbose"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+User-agent: *
+Crawl-delay: 1
+
+# Explicitly allow AI crawlers for GEO (Generative Engine Optimization)
+# Allow OpenAI (ChatGPT/SearchGPT)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# Allow Anthropic (Claude)
+User-agent: ClaudeBot
+Allow: /
+
+# Allow Perplexity AI (Live citations)
+User-agent: PerplexityBot
+Allow: /
+
+# Allow Google Gemini/Vertex AI
+User-agent: Google-Extended
+Allow: /
+
+# Allow Common Crawl (Training data for most base models)
+User-agent: CCBot
+Allow: /
+
+# Allow crawling of public pages
+Allow: /
+Allow: /about
+Allow: /privacy
+Allow: /screening
+Allow: /checklist
+Allow: /resources
+
+# Disallow crawling of protected/private areas
+Disallow: /dashboard
+Disallow: /admin-dashboard
+Disallow: /profile
+Disallow: /edit
+Disallow: /bookmarks
+Disallow: /callback
+Disallow: /api/
+
+# Disallow crawling of build artifacts and assets
+Disallow: /branding/
+
+# Sitemap location
+Sitemap: https://www.pittsburghpioneer.com/sitemap.xml

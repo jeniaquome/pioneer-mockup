@@ -1,0 +1,19 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "railway.Dockerfile",
+    "buildArgs": {
+      "VITE_AUTH0_DOMAIN": "${{VITE_AUTH0_DOMAIN}}",
+      "VITE_AUTH0_CLIENT_ID": "${{VITE_AUTH0_CLIENT_ID}}",
+      "VITE_AUTH0_AUDIENCE": "${{VITE_AUTH0_AUDIENCE}}"
+    }
+  },
+  "deploy": {
+    "startCommand": "python docker_entrypoint.py",
+    "healthcheckPath": "/api/health",
+    "healthcheckTimeout": 300,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 3
+  }
+}

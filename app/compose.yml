@@ -1,0 +1,60 @@
+
+services:
+    postgres:
+        image: postgres:17
+        environment:
+            POSTGRES_DB: pioneer
+            POSTGRES_USER: pioneer_user
+            POSTGRES_PASSWORD: pioneer_password
+            POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U pioneer_user -d pioneer"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+    redis:
+        image: redis:7-alpine
+        ports:
+            - "6379:6379"
+        volumes:
+            - redis_data:/data
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+        command: redis-server --appendonly yes
+
+    api:
+        build: 
+            context: .  # Uses Dockerfile in app directory
+            args:
+                VITE_AUTH0_DOMAIN: ${VITE_AUTH0_DOMAIN}
+                VITE_AUTH0_CLIENT_ID: ${VITE_AUTH0_CLIENT_ID}
+                VITE_AUTH0_AUDIENCE: ${VITE_AUTH0_AUDIENCE}
+        ports:
+            - "8000:8000" # Expose port 8000 on local machine, map to 8000 inside docker container (fast API port)
+        env_file:
+            - .env  # Load environment variables from .env file
+        environment:
+            - ENV=DEV
+            - INIT_DEMO_DATA=false # Initialize demo resources on startup
+            - INIT_DEMO_USERS=true  # Create demo users without demo resources
+            - INIT_DEMO_DATA_MODE=no-resources # If INIT_DEMO_DATA=true, include resources
+            - DATABASE_URL=postgresql://pioneer_user:pioneer_password@postgres:5432/pioneer
+            - REDIS_URL=redis://redis:6379/0  # Redis connection for caching
+        volumes: []
+        depends_on:
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+
+volumes:
+    postgres_data:
+    redis_data:
