@@ -43,37 +43,37 @@ const App = () => {
 
       {/* Navigation */}
       <nav className={`fixed top-0 w-full z-[100] px-8 py-5 flex justify-between items-center transition-all duration-700 ease-out ${scrolled ? 'bg-white/95 backdrop-blur-xl shadow-lg shadow-[#003366]/5 py-4' : 'bg-transparent'}`}>
-        <div className="flex items-center gap-3 cursor-pointer group">
+        <a href="https://www.pittsburghpioneer.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 cursor-pointer group">
           <img
             src="https://www.pittsburghpioneer.com/branding/assets/logo-0.svg"
             alt="Pittsburgh Pioneer Logo"
             className="h-10 w-auto transition-transform duration-500 group-hover:scale-105"
           />
-        </div>
+        </a>
 
         <div className={`hidden md:flex gap-12 text-[10px] font-black uppercase tracking-[0.25em] ${scrolled ? 'text-[#003366]' : 'text-white drop-shadow-lg'}`}>
-          <button className="relative hover:text-[#FFB81C] transition-colors duration-300 group">
+          <a href="#neighborhoods" className="relative hover:text-[#FFB81C] transition-colors duration-300 group">
             Neighborhoods
             <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#FFB81C] group-hover:w-full transition-all duration-500" />
-          </button>
-          <button className="relative hover:text-[#FFB81C] transition-colors duration-300 group">
+          </a>
+          <a href="https://www.pittsburghpioneer.com/resources" target="_blank" rel="noopener noreferrer" className="relative hover:text-[#FFB81C] transition-colors duration-300 group">
             Resources
             <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#FFB81C] group-hover:w-full transition-all duration-500" />
-          </button>
-          <button className="relative hover:text-[#FFB81C] transition-colors duration-300 group">
+          </a>
+          <a href="https://www.pittsburghpioneer.com/about" target="_blank" rel="noopener noreferrer" className="relative hover:text-[#FFB81C] transition-colors duration-300 group">
             The Pioneer Story
             <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#FFB81C] group-hover:w-full transition-all duration-500" />
-          </button>
+          </a>
         </div>
 
         <div className="flex items-center gap-6">
-          <button className={`relative overflow-hidden px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 transform hover:scale-110 hover:shadow-2xl ${scrolled ? 'bg-[#003366] text-white shadow-lg shadow-[#003366]/20' : 'bg-white text-[#003366] shadow-2xl'} group`}>
+          <a href="https://www.pittsburghpioneer.com/resources" target="_blank" rel="noopener noreferrer" className={`relative overflow-hidden px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 transform hover:scale-110 hover:shadow-2xl ${scrolled ? 'bg-[#003366] text-white shadow-lg shadow-[#003366]/20' : 'bg-white text-[#003366] shadow-2xl'} group`}>
             <span className="relative z-10 flex items-center gap-2">
               <Sparkles className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               Get Your Guide
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-[#FFB81C] to-[#FF9500] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          </button>
+          </a>
         </div>
       </nav>
 
@@ -146,18 +146,18 @@ const App = () => {
             </p>
 
             <div className="flex flex-col md:flex-row gap-5 justify-center animate-fade-in delay-700">
-              <button className="group relative overflow-hidden bg-gradient-to-r from-[#FFB81C] via-[#FF9500] to-[#FFB81C] text-[#003366] px-12 py-6 rounded-full text-sm font-black uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:shadow-[0_0_60px_rgba(255,184,28,0.6)] transition-all duration-500 hover:scale-105 bg-[length:200%_100%] hover:bg-[position:100%_0]">
+              <a href="https://www.pittsburghpioneer.com/resources" target="_blank" rel="noopener noreferrer" className="group relative overflow-hidden bg-gradient-to-r from-[#FFB81C] via-[#FF9500] to-[#FFB81C] text-[#003366] px-12 py-6 rounded-full text-sm font-black uppercase tracking-[0.2em] flex items-center justify-center gap-4 hover:shadow-[0_0_60px_rgba(255,184,28,0.6)] transition-all duration-500 hover:scale-105 bg-[length:200%_100%] hover:bg-[position:100%_0]">
                 <span className="relative z-10">Begin Your Journey</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-500 relative z-10" />
                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </button>
-              <button className="group px-12 py-6 rounded-full text-sm font-black uppercase tracking-[0.2em] text-white border-2 border-white/30 backdrop-blur-xl hover:bg-white/20 hover:border-white/60 transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] relative overflow-hidden">
+              </a>
+              <a href="#neighborhoods" className="group px-12 py-6 rounded-full text-sm font-black uppercase tracking-[0.2em] text-white border-2 border-white/30 backdrop-blur-xl hover:bg-white/20 hover:border-white/60 transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] relative overflow-hidden">
                 <span className="relative z-10 flex items-center gap-3">
                   <MapPin className="w-5 h-5" />
                   Explore The Map
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -257,7 +257,7 @@ const App = () => {
       </section>
 
       {/* Interactive Feature Grid (Dribbble Influence) */}
-      <section className="py-40 bg-gradient-to-b from-[#FAFBFC] via-[#F5F7FA] to-white relative overflow-hidden">
+      <section id="neighborhoods" className="py-40 bg-gradient-to-b from-[#FAFBFC] via-[#F5F7FA] to-white relative overflow-hidden">
         {/* Decorative Grid Pattern */}
         <div className="absolute inset-0 opacity-[0.02]" style={{
           backgroundImage: `repeating-linear-gradient(0deg, #003366 0px, #003366 1px, transparent 1px, transparent 60px),
@@ -282,16 +282,19 @@ const App = () => {
            {/* Feature Cards Grid */}
            <div className="grid md:grid-cols-3 gap-8">
               {[
-                { title: 'Housing', icon: <Home />, desc: 'Vetted neighborhoods and rental guides tailored to your work life.', color: 'from-blue-500/10 to-blue-600/5' },
-                { title: 'Education', icon: <BookOpen />, desc: 'Navigating the Pittsburgh school system with ease.', color: 'from-purple-500/10 to-purple-600/5' },
-                { title: 'Community', icon: <Users />, desc: 'Find your faith, your hobby, and your local neighborhood council.', color: 'from-green-500/10 to-green-600/5' },
-                { title: 'Language', icon: <Globe />, desc: 'Connecting you with local translators and ESL programs.', color: 'from-orange-500/10 to-orange-600/5' },
-                { title: 'Settling In', icon: <CheckCircle2 />, desc: 'Utilities, DMV, and the technicalities of moving made simple.', color: 'from-pink-500/10 to-pink-600/5' },
-                { title: 'Neighborhoods', icon: <MapPin />, desc: 'Deep dives into the 90 unique neighborhoods of our city.', color: 'from-teal-500/10 to-teal-600/5' },
+                { title: 'Housing', icon: <Home />, desc: 'Vetted neighborhoods and rental guides tailored to your work life.', color: 'from-blue-500/10 to-blue-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#housing' },
+                { title: 'Education', icon: <BookOpen />, desc: 'Navigating the Pittsburgh school system with ease.', color: 'from-purple-500/10 to-purple-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#education' },
+                { title: 'Community', icon: <Users />, desc: 'Find your faith, your hobby, and your local neighborhood council.', color: 'from-green-500/10 to-green-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#community' },
+                { title: 'Language', icon: <Globe />, desc: 'Connecting you with local translators and ESL programs.', color: 'from-orange-500/10 to-orange-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#language' },
+                { title: 'Settling In', icon: <CheckCircle2 />, desc: 'Utilities, DMV, and the technicalities of moving made simple.', color: 'from-pink-500/10 to-pink-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#settling-in' },
+                { title: 'Neighborhoods', icon: <MapPin />, desc: 'Deep dives into the 90 unique neighborhoods of our city.', color: 'from-teal-500/10 to-teal-600/5', link: 'https://www.pittsburghpioneer.com/resources?lang=en#neighborhoods' },
               ].map((item, idx) => (
-                <div
+                <a
                   key={idx}
-                  className="group relative bg-white p-12 rounded-[3rem] hover:shadow-[0_30px_80px_rgba(0,51,102,0.15)] transition-all duration-700 hover:-translate-y-3 border border-[#003366]/5 overflow-hidden"
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative bg-white p-12 rounded-[3rem] hover:shadow-[0_30px_80px_rgba(0,51,102,0.15)] transition-all duration-700 hover:-translate-y-3 border border-[#003366]/5 overflow-hidden cursor-pointer"
                   style={{ animationDelay: `${idx * 100}ms` }}
                 >
                    {/* Animated Background Gradient */}
@@ -310,17 +313,17 @@ const App = () => {
                    <p className="relative text-[#1A1A1A]/60 leading-relaxed text-base mb-10 group-hover:text-[#1A1A1A]/80 transition-colors duration-500">{item.desc}</p>
 
                    {/* CTA Button */}
-                   <button className="relative flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-[#003366] group-hover:text-[#FFB81C] group-hover:gap-5 transition-all duration-500">
+                   <span className="relative flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-[#003366] group-hover:text-[#FFB81C] group-hover:gap-5 transition-all duration-500">
                       <span>Learn More</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-500" />
-                      <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#FFB81C] group-hover:w-full transition-all duration-700" />
-                   </button>
+                      <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#FFB81C] group-hover:w-full transition-all duration-700" />
+                   </span>
 
                    {/* Number Badge */}
                    <div className="absolute bottom-8 right-8 w-12 h-12 rounded-full bg-[#003366]/5 flex items-center justify-center text-[#003366]/20 font-black text-2xl group-hover:bg-[#FFB81C]/10 group-hover:text-[#FFB81C]/40 transition-all duration-500">
                      {idx + 1}
                    </div>
-                </div>
+                </a>
               ))}
            </div>
         </div>
@@ -365,20 +368,20 @@ const App = () => {
 
            {/* CTA Button */}
            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center animate-fade-in delay-300">
-             <button className="group relative overflow-hidden bg-gradient-to-r from-[#FFB81C] to-[#FF9500] text-[#003366] px-16 py-7 rounded-full text-sm font-black uppercase tracking-[0.25em] hover:shadow-[0_0_80px_rgba(255,184,28,0.6)] transition-all duration-700 hover:scale-110">
+             <a href="https://www.pittsburghpioneer.com/resources" target="_blank" rel="noopener noreferrer" className="group relative overflow-hidden bg-gradient-to-r from-[#FFB81C] to-[#FF9500] text-[#003366] px-16 py-7 rounded-full text-sm font-black uppercase tracking-[0.25em] hover:shadow-[0_0_80px_rgba(255,184,28,0.6)] transition-all duration-700 hover:scale-110">
                <span className="relative z-10 flex items-center gap-3">
                  Start Your Journey
                  <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-500" />
                </span>
                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-             </button>
+             </a>
 
-             <button className="group flex items-center gap-3 text-white/80 hover:text-white text-sm font-bold uppercase tracking-[0.2em] transition-colors duration-300">
+             <a href="https://www.pittsburghpioneer.com/about" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 text-white/80 hover:text-white text-sm font-bold uppercase tracking-[0.2em] transition-colors duration-300">
                <div className="w-12 h-12 rounded-full border-2 border-white/30 group-hover:border-[#FFB81C] flex items-center justify-center group-hover:bg-[#FFB81C]/10 transition-all duration-500">
                  <Play className="w-5 h-5 ml-0.5" />
                </div>
                Watch The Story
-             </button>
+             </a>
            </div>
 
            {/* Trust Indicators */}
@@ -402,9 +405,9 @@ const App = () => {
              <div className="flex flex-col md:flex-row justify-between items-center border-t border-white/10 pt-12 text-[9px] uppercase tracking-[0.3em] font-bold text-white/40">
                 <p>© 2025 Pittsburgh Pioneer • Made with ❤️ in the Steel City</p>
                 <div className="flex gap-12 mt-6 md:mt-0">
-                   <button className="hover:text-[#FFB81C] transition-colors duration-300">Terms</button>
-                   <button className="hover:text-[#FFB81C] transition-colors duration-300">Privacy</button>
-                   <button className="hover:text-[#FFB81C] transition-colors duration-300">Contact</button>
+                   <a href="https://www.pittsburghpioneer.com/privacy" target="_blank" rel="noopener noreferrer" className="hover:text-[#FFB81C] transition-colors duration-300">Terms</a>
+                   <a href="https://www.pittsburghpioneer.com/privacy" target="_blank" rel="noopener noreferrer" className="hover:text-[#FFB81C] transition-colors duration-300">Privacy</a>
+                   <a href="https://www.pittsburghpioneer.com/about" target="_blank" rel="noopener noreferrer" className="hover:text-[#FFB81C] transition-colors duration-300">Contact</a>
                 </div>
              </div>
            </div>
