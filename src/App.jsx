@@ -10,7 +10,9 @@ import {
   Globe,
   Play,
   Sparkles,
-  Camera
+  Camera,
+  Menu,
+  X
 } from 'lucide-react';
 
 // Pittsburgh photos from public folder
@@ -31,6 +33,7 @@ const pittsburghPhotos = [
 
 const App = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const heroRef = useRef(null);
 
@@ -65,13 +68,17 @@ const App = () => {
           <img
             src="https://www.pittsburghpioneer.com/branding/assets/logo-0.svg"
             alt="Pittsburgh Pioneer Logo"
-            className="h-10 w-auto transition-transform duration-500 group-hover:scale-105"
+            className={`h-10 w-auto transition-all duration-500 group-hover:scale-105 ${scrolled ? '' : 'brightness-0 invert drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]'}`}
           />
         </a>
 
         <div className={`hidden md:flex gap-12 text-[10px] font-black uppercase tracking-[0.25em] ${scrolled ? 'text-[#003366]' : 'text-white drop-shadow-lg'}`}>
           <a href="#neighborhoods" className="relative hover:text-[#FFB81C] transition-colors duration-300 group">
             Neighborhoods
+            <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#FFB81C] group-hover:w-full transition-all duration-500" />
+          </a>
+          <a href="#gallery" className="relative hover:text-[#FFB81C] transition-colors duration-300 group">
+            Gallery
             <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#FFB81C] group-hover:w-full transition-all duration-500" />
           </a>
           <a href="https://www.pittsburghpioneer.com/resources" target="_blank" rel="noopener noreferrer" className="relative hover:text-[#FFB81C] transition-colors duration-300 group">
@@ -84,16 +91,46 @@ const App = () => {
           </a>
         </div>
 
-        <div className="flex items-center gap-6">
-          <a href="https://www.pittsburghpioneer.com/resources" target="_blank" rel="noopener noreferrer" className={`relative overflow-hidden px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 transform hover:scale-110 hover:shadow-2xl ${scrolled ? 'bg-[#003366] text-white shadow-lg shadow-[#003366]/20' : 'bg-white text-[#003366] shadow-2xl'} group`}>
+        <div className="flex items-center gap-4">
+          <a href="https://www.pittsburghpioneer.com/resources" target="_blank" rel="noopener noreferrer" className={`hidden md:flex relative overflow-hidden px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 transform hover:scale-110 hover:shadow-2xl ${scrolled ? 'bg-[#003366] text-white shadow-lg shadow-[#003366]/20' : 'bg-white text-[#003366] shadow-2xl'} group`}>
             <span className="relative z-10 flex items-center gap-2">
               <Sparkles className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               Get Your Guide
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-[#FFB81C] to-[#FF9500] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </a>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={`md:hidden p-2 rounded-lg transition-all duration-300 ${scrolled ? 'text-[#003366] hover:bg-[#003366]/10' : 'text-white hover:bg-white/10'}`}
+            aria-label="Toggle mobile menu"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
       </nav>
+
+      {/* Mobile Menu Overlay */}
+      <div className={`fixed inset-0 z-[99] bg-[#003366] transition-all duration-500 ${mobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+        <div className="flex flex-col items-center justify-center h-full gap-8 text-white">
+          <a href="#neighborhoods" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase tracking-[0.2em] hover:text-[#FFB81C] transition-colors duration-300">
+            Neighborhoods
+          </a>
+          <a href="#gallery" onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black uppercase tracking-[0.2em] hover:text-[#FFB81C] transition-colors duration-300">
+            Gallery
+          </a>
+          <a href="https://www.pittsburghpioneer.com/resources" target="_blank" rel="noopener noreferrer" className="text-2xl font-black uppercase tracking-[0.2em] hover:text-[#FFB81C] transition-colors duration-300">
+            Resources
+          </a>
+          <a href="https://www.pittsburghpioneer.com/about" target="_blank" rel="noopener noreferrer" className="text-2xl font-black uppercase tracking-[0.2em] hover:text-[#FFB81C] transition-colors duration-300">
+            The Pioneer Story
+          </a>
+          <a href="https://www.pittsburghpioneer.com/resources" target="_blank" rel="noopener noreferrer" className="mt-8 px-10 py-4 bg-[#FFB81C] text-[#003366] rounded-full text-sm font-black uppercase tracking-[0.2em] hover:shadow-[0_0_40px_rgba(255,184,28,0.5)] transition-all duration-300">
+            Get Your Guide
+          </a>
+        </div>
+      </div>
 
       {/* Cinematic Hero Section */}
       <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden">
@@ -192,16 +229,16 @@ const App = () => {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 animate-bounce-slow">
-          <div className="flex flex-col items-center gap-3 text-white/50">
+        <a href="#mission" className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 animate-bounce-slow cursor-pointer group">
+          <div className="flex flex-col items-center gap-3 text-white/50 group-hover:text-white/80 transition-colors duration-300">
             <span className="text-[8px] uppercase tracking-[0.3em] font-bold">Scroll to Explore</span>
-            <div className="w-[2px] h-12 bg-gradient-to-b from-white/50 to-transparent" />
+            <div className="w-[2px] h-12 bg-gradient-to-b from-white/50 to-transparent group-hover:from-[#FFB81C] transition-all duration-300" />
           </div>
-        </div>
+        </a>
       </section>
 
       {/* The Mission Statement Section - Editorial Layout */}
-      <section className="py-40 px-6 relative overflow-hidden">
+      <section id="mission" className="py-40 px-6 relative overflow-hidden">
         {/* Decorative Background Elements */}
         <div className="absolute top-20 right-10 w-96 h-96 bg-[#FFB81C]/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-20 left-10 w-96 h-96 bg-[#003366]/5 rounded-full blur-[120px]" />
@@ -269,6 +306,19 @@ const App = () => {
                 <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#1A1A1A]/40 mt-3 group-hover:text-[#003366]/60 transition-colors duration-500">To get started</p>
                 <div className="w-0 h-[2px] bg-[#FFB81C] group-hover:w-full transition-all duration-500 mt-2" />
               </div>
+            </div>
+
+            {/* Mission CTA */}
+            <div className="pt-12">
+              <a
+                href="https://www.pittsburghpioneer.com/resources"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-4 px-10 py-5 bg-[#003366] text-white rounded-full text-sm font-black uppercase tracking-[0.2em] hover:bg-[#FFB81C] hover:text-[#003366] hover:shadow-[0_20px_50px_rgba(255,184,28,0.4)] transition-all duration-500"
+              >
+                <span>Get Started Free</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-500" />
+              </a>
             </div>
           </div>
         </div>
@@ -348,7 +398,7 @@ const App = () => {
       </section>
 
       {/* Pittsburgh Photo Showcase */}
-      <section className="py-32 bg-[#003366] relative overflow-hidden">
+      <section id="gallery" className="py-32 bg-[#003366] relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
