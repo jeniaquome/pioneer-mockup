@@ -11,36 +11,45 @@ test.describe('Homepage Redesign', () => {
 
     // Check hero section has main CTA buttons
     await expect(page.locator('a[href="/screening"]').first()).toBeVisible();
-    await expect(page.locator('a[href="#story"]').first()).toBeVisible();
+    await expect(page.locator('a[href="/resources"]').first()).toBeVisible();
   });
 
-  test('Get Your Free Guide CTA links to screening', async ({ page }) => {
-    const guideBtn = page.locator('a[href="/screening"]').filter({ hasText: /Get Your Free Guide/i });
-    await expect(guideBtn.first()).toBeVisible();
+  test('Create Your Roadmap CTA links to screening', async ({ page }) => {
+    const roadmapBtn = page.locator('a[href="/screening"]').filter({ hasText: /Create Your Roadmap/i });
+    await expect(roadmapBtn.first()).toBeVisible();
 
     // Click and verify navigation
-    await guideBtn.first().click();
+    await roadmapBtn.first().click();
     await expect(page).toHaveURL(/\/screening/);
   });
 
-  test('Learn Our Story CTA links to story section', async ({ page }) => {
-    const storyBtn = page.locator('a[href="#story"]').filter({ hasText: /Learn Our Story/i });
-    await expect(storyBtn).toBeVisible();
+  test('Explore Resources CTA links to resources', async ({ page }) => {
+    const resourcesBtn = page.locator('a[href="/resources"]').filter({ hasText: /Explore Resources/i });
+    await expect(resourcesBtn).toBeVisible();
   });
 
-  test('Story section is accessible via scroll indicator', async ({ page }) => {
-    const scrollIndicator = page.locator('a[href="#story"]').first();
-    await expect(scrollIndicator).toBeVisible();
+  test('Why section explains the purpose', async ({ page }) => {
+    // Scroll to why section
+    await page.locator('#why').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
 
-    // Click scroll indicator
-    await scrollIndicator.click({ force: true });
+    // Check for key content
+    const whyText = await page.locator('#why').textContent();
+    expect(whyText).toContain('Why Pittsburgh Tomorrow Pioneer');
+    expect(whyText).toContain('starting from scratch');
+  });
 
-    // Wait for scroll animation
-    await page.waitForTimeout(1000);
+  test('Story section has You Are the Pioneer content', async ({ page }) => {
+    // Scroll to story section
+    await page.locator('#story').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
 
     // Check story section is visible
-    const storySection = page.locator('#story');
-    await expect(storySection).toBeVisible();
+    await expect(page.locator('#story')).toBeVisible();
+
+    // Check for key content
+    const storyText = await page.locator('#story').textContent();
+    expect(storyText).toContain('Pioneer');
   });
 
   test('feature cards link to internal resources with correct category IDs', async ({ page }) => {
@@ -71,19 +80,14 @@ test.describe('Homepage Redesign', () => {
     }
   });
 
-  test('story section displays images and content', async ({ page }) => {
-    // Scroll to story section
-    await page.locator('#story').scrollIntoViewIfNeeded();
+  test('How Pioneer Helps section displays features', async ({ page }) => {
+    // Scroll to mission section
+    await page.locator('#mission').scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
 
-    // Check story section has images
-    const storyImages = page.locator('#story img');
-    const count = await storyImages.count();
-    expect(count).toBeGreaterThan(0);
-
-    // Check for narrative text
-    const storyText = await page.locator('#story').textContent();
-    expect(storyText).toContain('groundbreaking');
+    // Check for feature content
+    const missionText = await page.locator('#mission').textContent();
+    expect(missionText).toContain('How Pittsburgh Tomorrow Pioneer Helps');
   });
 
   test('no external pittsburghpioneer.com links in visible navigation', async ({ page }) => {
@@ -126,13 +130,24 @@ test.describe('Homepage Redesign', () => {
     }
   });
 
-  test('final CTA section has Get Your Free Guide button', async ({ page }) => {
+  test('About Pittsburgh Tomorrow section is at the bottom', async ({ page }) => {
+    // Scroll to bottom area
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight - 1000));
+    await page.waitForTimeout(500);
+
+    // Check for About Pittsburgh Tomorrow content
+    const pageText = await page.textContent('body');
+    expect(pageText).toContain('About Pittsburgh Tomorrow');
+    expect(pageText).toContain('nonprofit organization');
+  });
+
+  test('final CTA section has Create Your Roadmap button', async ({ page }) => {
     // Scroll to bottom
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.waitForTimeout(500);
 
     // Check final CTA button
-    const ctaBtn = page.locator('a[href="/screening"]').filter({ hasText: /Get Your Free Guide/i });
+    const ctaBtn = page.locator('a[href="/screening"]').filter({ hasText: /Create Your Roadmap/i });
     await expect(ctaBtn.last()).toBeVisible();
   });
 });

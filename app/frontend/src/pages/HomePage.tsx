@@ -9,89 +9,45 @@ import {
   Globe,
   Sparkles,
   Camera,
-  Quote,
-  MapPin,
+  Shield,
+  Map,
+  MessageCircle,
   Heart,
+  Building2,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { SEO } from '@/components/SEO'
 import { StructuredData } from '@/components/StructuredData'
-import { useState, useEffect, useRef } from 'react'
+import { useRef } from 'react'
 
-// Pittsburgh images from public folder
+// Pittsburgh images
 const images = {
   hero: '/Copy of yosselin-artavia-RKH2ws90pMI-unsplashriversunsetpittsburghdowntownviewacrosswater.jpg',
   downtown: '/Copy of downtownfrombridge-unsplash.jpg',
   yellowBridge: '/Copy of AdobeStock_436357547yellowbridgewithwhitesky.jpeg',
-  yellowBridgeRoad: '/Copy of jaime-casap-obaEBmP_CTA-yellowbridgeroad.jpg',
-  yellowBridgeNight: '/Copy of jason-pischke-YfoxivJxNT4-yellowbridgeatnight.jpg',
-  ppgPlace: '/Copy of AdobeStock_392745144PPGplaceglass_building.jpeg',
   neighborhoodHill: '/Copy of jimmy-woo-l4pVJ4zzwt0-unsplashaspinwallpittsburghneighborhoodhillview.jpg',
-  riverSky: '/Copy of jocelyn-allen-0Orb6gDDn4g-unsplashriverwithskyreflectedonwater.jpg',
-  ppgWithBridge: '/Copy of jocelyn-allen-AgpI111Z4Ys-unsplashPGAplacewithyellowbridgecuttinginfront.jpg',
-  schenleyPark: '/Copy of nathan-kelly-U3eEA6puoA4-unsplashschenleyparkbridgepillarsforestunderrustygreenbridge.jpg',
-  bridgeSunshine: '/Copy of willie-shaw-64iuIOektb4-unsplashyellowbridgeroadviewwithsunshiningthrough.jpg',
   cityNight: '/Copy of zhen-yao-is1I1XTI4NU-unsplashcitybluewithlightslitupatnightbridgescrossingriver.jpg',
-  adobeBuilding: '/Copy of AdobeStock_175831629.jpeg',
-  adobeFamily: '/Copy of AdobeStock_361619753.jpeg',
-  adobeYellowBridge: '/Copy of AdobeStock_371672182_yellow_bridge.jpeg',
-}
-
-// Animated counter component
-function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0)
-  const ref = useRef<HTMLSpanElement>(null)
-  const [hasAnimated, setHasAnimated] = useState(false)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated) {
-          setHasAnimated(true)
-          const startTime = Date.now()
-          const duration = 2000
-          const animate = () => {
-            const elapsed = Date.now() - startTime
-            const progress = Math.min(elapsed / duration, 1)
-            const easeOut = 1 - Math.pow(1 - progress, 3)
-            setCount(Math.floor(easeOut * target))
-            if (progress < 1) requestAnimationFrame(animate)
-          }
-          requestAnimationFrame(animate)
-        }
-      },
-      { threshold: 0.5 }
-    )
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [target, hasAnimated])
-
-  return <span ref={ref}>{count}{suffix}</span>
+  ppgPlace: '/Copy of AdobeStock_392745144PPGplaceglass_building.jpeg',
+  bridgeSunshine: '/Copy of willie-shaw-64iuIOektb4-unsplashyellowbridgeroadviewwithsunshiningthrough.jpg',
+  yellowBridgeNight: '/Copy of jason-pischke-YfoxivJxNT4-yellowbridgeatnight.jpg',
 }
 
 export function HomePage() {
   const { t } = useTranslation()
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Parallax for different sections
   const { scrollYProgress } = useScroll()
   const heroY = useTransform(scrollYProgress, [0, 0.3], ['0%', '30%'])
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
 
-  // Determine base URL for absolute URLs
   const getBaseUrl = () => {
-    if (import.meta.env.VITE_SITE_BASE_URL) {
-      return import.meta.env.VITE_SITE_BASE_URL
-    }
-    if (typeof window !== 'undefined' && window.location.origin) {
-      return window.location.origin
-    }
+    if (import.meta.env.VITE_SITE_BASE_URL) return import.meta.env.VITE_SITE_BASE_URL
+    if (typeof window !== 'undefined' && window.location.origin) return window.location.origin
     return 'https://www.pittsburghpioneer.com'
   }
 
   const baseUrl = getBaseUrl()
 
-  // Hybrid JSON-LD schema
   const hybridSchema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -109,17 +65,7 @@ export function HomePage() {
         "name": "Pittsburgh Tomorrow Pioneer",
         "description": "Your personalized guide to settling and thriving in Pittsburgh.",
         "url": `${baseUrl}/`,
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": `${baseUrl}/resources?search={search_term_string}`
-          },
-          "query-input": "required name=search_term_string"
-        },
-        "publisher": {
-          "@id": `${baseUrl}/#organization`
-        }
+        "publisher": { "@id": `${baseUrl}/#organization` }
       }
     ]
   }
@@ -135,109 +81,63 @@ export function HomePage() {
       <StructuredData data={hybridSchema} />
 
       <main ref={containerRef} className="bg-white overflow-x-hidden">
+
         {/* ═══════════════════════════════════════════════════════════════════════════
-            HERO SECTION - Full viewport with parallax background
+            HERO - Welcome & Purpose
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="hero" className="relative h-screen overflow-hidden">
-          {/* Parallax Background Image */}
-          <motion.div
-            className="absolute inset-0 scale-110"
-            style={{ y: heroY }}
-          >
-            <img
-              src={images.hero}
-              alt="Pittsburgh skyline at sunset"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-brand-reflex-blue/60 via-brand-reflex-blue/40 to-brand-reflex-blue/80" />
+        <section id="hero" className="relative min-h-screen flex items-center">
+          {/* Background */}
+          <motion.div className="absolute inset-0 scale-110" style={{ y: heroY }}>
+            <img src={images.hero} alt="Pittsburgh skyline at sunset" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-r from-brand-reflex-blue/95 via-brand-reflex-blue/80 to-brand-reflex-blue/60" />
           </motion.div>
 
-          {/* Hero Content */}
-          <motion.div
-            className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6"
-            style={{ opacity: heroOpacity }}
-          >
-            {/* Badge */}
+          {/* Content */}
+          <motion.div className="relative z-10 max-w-6xl mx-auto px-6 py-32" style={{ opacity: heroOpacity }}>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="mb-6"
-            >
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-                <MapPin className="w-4 h-4 text-brand-pms-129" />
-                <span className="text-[10px] uppercase tracking-[0.3em] font-black text-white/90">
-                  Welcome to Pittsburgh
-                </span>
-              </div>
-            </motion.div>
-
-            {/* Main Headline */}
-            <motion.h1
-              className="text-white text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-black leading-[0.9] tracking-tight max-w-5xl"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ duration: 0.8 }}
+              className="max-w-4xl"
             >
-              Your new chapter in the{' '}
-              <span className="text-brand-pms-129 italic">Steel City</span>{' '}
-              starts here.
-            </motion.h1>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full mb-8">
+                <Sparkles className="w-4 h-4 text-brand-pms-129" />
+                <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-white/80">Your Personal Guide</span>
+              </div>
 
-            {/* Subtitle */}
-            <motion.p
-              className="mt-8 text-xl sm:text-2xl text-white/80 max-w-2xl font-light"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              A free, personalized guide helping newcomers connect with their new city faster and more effectively.
-            </motion.p>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black text-white leading-[1.1] mb-8">
+                Welcome to{' '}
+                <span className="text-brand-pms-129 italic">Pittsburgh Tomorrow Pioneer</span>
+              </h1>
 
-            {/* CTA Buttons */}
-            <motion.div
-              className="mt-10 flex flex-col sm:flex-row gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-            >
-              <Link
-                to="/screening"
-                className="group bg-brand-pms-129 text-brand-reflex-blue px-10 py-5 rounded-full text-[11px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:shadow-[0_0_60px_rgba(244,179,61,0.5)] transition-all duration-500 hover:scale-105"
-              >
-                <span>Get Your Free Guide</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
-              </Link>
-              <a
-                href="#story"
-                className="px-10 py-5 rounded-full text-[11px] font-black uppercase tracking-[0.2em] text-white border-2 border-white/40 hover:bg-white/10 hover:border-white transition-all duration-300 flex items-center justify-center"
-              >
-                Learn Our Story
-              </a>
-            </motion.div>
+              <p className="text-lg sm:text-xl text-white/90 leading-relaxed mb-6 max-w-3xl">
+                Your personal guide to starting a new life in Pittsburgh and Allegheny County. Whether you've just arrived in the U.S. or you've taken a new job with one of Pittsburgh's growing companies in energy, robotics, AI, life sciences, or steel — Pittsburgh Tomorrow Pioneer is here to help.
+              </p>
 
-            {/* Trust Stats */}
-            <motion.div
-              className="mt-16 grid grid-cols-3 gap-8 sm:gap-16"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-            >
-              {[
-                { value: '380+', label: 'Resources' },
-                { value: '7+', label: 'Languages' },
-                { value: '100%', label: 'Free' },
-              ].map((stat, i) => (
-                <div key={i} className="text-center">
-                  <div className="text-3xl sm:text-4xl font-serif font-black text-brand-pms-129">{stat.value}</div>
-                  <div className="text-[9px] uppercase tracking-[0.2em] text-white/60 mt-1">{stat.label}</div>
-                </div>
-              ))}
+              <p className="text-lg text-white/70 leading-relaxed mb-10 max-w-3xl">
+                From finding housing to enrolling your children in school, from locating English classes to connecting with faith communities or local food support, Pittsburgh Tomorrow Pioneer brings together the resources you need in one place.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link
+                  to="/screening"
+                  className="group bg-brand-pms-129 text-brand-reflex-blue px-8 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:shadow-[0_0_40px_rgba(244,179,61,0.5)] transition-all duration-500 hover:scale-105"
+                >
+                  <span>Create Your Roadmap</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  to="/resources"
+                  className="px-8 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.2em] text-white border-2 border-white/30 hover:bg-white/10 transition-all duration-300 text-center"
+                >
+                  Explore Resources
+                </Link>
+              </div>
             </motion.div>
           </motion.div>
 
           {/* Scroll Indicator */}
-          <a href="#story" className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
+          <a href="#why" className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
             <motion.div
               className="flex flex-col items-center gap-2 text-white/50 hover:text-white/80 transition-colors cursor-pointer"
               animate={{ y: [0, 8, 0] }}
@@ -250,312 +150,118 @@ export function HomePage() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════════════
-            THE STORY SECTION - Image-driven narrative panels
+            WHY PITTSBURGH TOMORROW PIONEER
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="story" className="relative">
-
-          {/* Panel 1: Introduction - Full width image with overlaid text */}
-          <div className="relative min-h-screen flex items-center">
-            {/* Background Image with Parallax */}
+        <section id="why" className="py-20 sm:py-28 bg-white">
+          <div className="max-w-6xl mx-auto px-6">
             <motion.div
-              className="absolute inset-0"
-              initial={{ scale: 1.1 }}
-              whileInView={{ scale: 1 }}
-              transition={{ duration: 1.5 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
               viewport={{ once: true }}
+              className="text-center mb-16"
             >
-              <img
-                src={images.downtown}
-                alt="Pittsburgh downtown from bridge"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-brand-reflex-blue/95 via-brand-reflex-blue/70 to-transparent" />
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-brand-reflex-blue leading-tight mb-6">
+                Why Pittsburgh Tomorrow Pioneer?
+              </h2>
+              <p className="text-2xl sm:text-3xl text-brand-pms-129 font-serif italic mb-8">
+                Because starting fresh in a new city shouldn't mean starting from scratch.
+              </p>
+              <p className="text-lg text-gray-600 leading-relaxed max-w-4xl mx-auto">
+                Pittsburgh Tomorrow Pioneer brings together everything you need to start a new life in Pittsburgh and Allegheny County — all in one trusted, easy-to-use place. It's free, comprehensive, and designed to save you hours of searching, comparing, and second-guessing.
+              </p>
             </motion.div>
 
-            {/* Content */}
-            <div className="relative z-10 max-w-7xl mx-auto px-6 py-24 grid lg:grid-cols-2 gap-12 items-center">
-              <motion.div
-                className="text-white space-y-6"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8 }}
-                viewport={{ once: true }}
-              >
-                <div className="inline-flex items-center gap-2 text-brand-pms-129 text-[10px] font-black uppercase tracking-[0.3em]">
-                  <Sparkles className="w-4 h-4" />
-                  The Pioneer Story
-                </div>
-                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black leading-[0.95]">
-                  A groundbreaking platform for{' '}
-                  <span className="text-brand-pms-129 italic">newcomers</span>
-                </h2>
-                <p className="text-lg sm:text-xl text-white/80 leading-relaxed">
-                  Pittsburgh Tomorrow Pioneer is a free, private, and multilingual relocation tool targeting transplants from other cities, boomerangers returning home, new students, and immigrants.
-                </p>
-                <p className="text-lg text-white/70 leading-relaxed">
-                  The intuitive design and use of the latest AI technologies ensures that users can easily discover everything they need to feel at home in Pittsburgh.
-                </p>
-              </motion.div>
-
-              {/* Floating Stats Card */}
-              <motion.div
-                className="hidden lg:block"
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.8 }}
-                viewport={{ once: true }}
-              >
-                <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20">
-                  <div className="grid grid-cols-2 gap-6">
-                    {[
-                      { value: <AnimatedCounter target={380} suffix="+" />, label: 'Vetted Resources' },
-                      { value: <AnimatedCounter target={7} suffix="+" />, label: 'Languages' },
-                      { value: <AnimatedCounter target={89} suffix="+" />, label: 'AI Languages' },
-                      { value: '2023', label: 'Founded' },
-                    ].map((stat, i) => (
-                      <div key={i} className="text-center p-4">
-                        <div className="text-4xl font-serif font-black text-brand-pms-129">{stat.value}</div>
-                        <div className="text-[9px] uppercase tracking-[0.15em] text-white/60 mt-2">{stat.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Panel 2: Bento Grid - Mixed images and content */}
-          <div className="bg-gray-50 py-20 sm:py-32">
-            <div className="max-w-7xl mx-auto px-6">
-              {/* Bento Grid */}
-              <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-4 auto-rows-[120px] sm:auto-rows-[150px]">
-
-                {/* Large Image - Yellow Bridge */}
+            {/* Comparison Points */}
+            <div className="grid md:grid-cols-3 gap-8 mb-16">
+              {[
+                {
+                  contrast: 'Where a Google search shows you everything,',
+                  benefit: 'Pioneer shows you exactly what matters.',
+                },
+                {
+                  contrast: 'Where an AI chatbot offers answers,',
+                  benefit: 'Pioneer gives you a roadmap.',
+                },
+                {
+                  contrast: 'Where most relocation tools stop at logistics,',
+                  benefit: 'Pioneer starts with community.',
+                },
+              ].map((item, i) => (
                 <motion.div
-                  className="col-span-4 md:col-span-4 lg:col-span-5 row-span-3 relative rounded-3xl overflow-hidden group cursor-pointer"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6 }}
-                  viewport={{ once: true }}
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <img
-                    src={images.yellowBridge}
-                    alt="Pittsburgh Yellow Bridge"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                  <div className="absolute bottom-6 left-6 text-white">
-                    <div className="text-[9px] uppercase tracking-[0.2em] text-brand-pms-129 mb-1">Iconic Landmark</div>
-                    <div className="text-2xl font-serif font-bold">Roberto Clemente Bridge</div>
-                  </div>
-                </motion.div>
-
-                {/* Quote Card */}
-                <motion.div
-                  className="col-span-4 md:col-span-4 lg:col-span-7 row-span-2 bg-brand-reflex-blue rounded-3xl p-6 sm:p-8 flex flex-col justify-center relative overflow-hidden"
-                  initial={{ opacity: 0, x: 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2, duration: 0.6 }}
-                  viewport={{ once: true }}
-                >
-                  <Quote className="absolute top-4 right-4 w-12 h-12 text-white/10" />
-                  <blockquote className="text-white text-lg sm:text-xl lg:text-2xl font-serif italic leading-relaxed">
-                    "This is a one-of-a-kind asset that no other city on earth has."
-                  </blockquote>
-                  <div className="mt-4 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-brand-pms-129 rounded-full flex items-center justify-center text-brand-reflex-blue font-black text-sm">DH</div>
-                    <div>
-                      <div className="text-white font-bold text-sm">Doug Heuck</div>
-                      <div className="text-white/60 text-xs">Founder, Pittsburgh Tomorrow</div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Small Image - PPG Place */}
-                <motion.div
-                  className="col-span-2 md:col-span-4 lg:col-span-4 row-span-2 relative rounded-3xl overflow-hidden group"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
-                  viewport={{ once: true }}
-                >
-                  <img
-                    src={images.ppgPlace}
-                    alt="PPG Place"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                </motion.div>
-
-                {/* Stat Card */}
-                <motion.div
-                  className="col-span-2 md:col-span-4 lg:col-span-3 row-span-2 bg-brand-pms-129 rounded-3xl p-6 flex flex-col justify-center items-center text-center"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4, duration: 0.6 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="text-5xl sm:text-6xl font-serif font-black text-brand-reflex-blue">
-                    <AnimatedCounter target={15} />m
-                  </div>
-                  <div className="text-[9px] uppercase tracking-[0.15em] text-brand-reflex-blue/70 mt-2">To Get Started</div>
-                </motion.div>
-
-                {/* Small Image - Neighborhood */}
-                <motion.div
-                  className="col-span-2 md:col-span-4 lg:col-span-3 row-span-2 relative rounded-3xl overflow-hidden group"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5, duration: 0.6 }}
-                  viewport={{ once: true }}
-                >
-                  <img
-                    src={images.neighborhoodHill}
-                    alt="Pittsburgh neighborhood"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                </motion.div>
-
-                {/* Small Image - River */}
-                <motion.div
-                  className="col-span-2 md:col-span-4 lg:col-span-2 row-span-1 relative rounded-2xl overflow-hidden group"
+                  key={i}
+                  className="text-center p-6"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 0.5 }}
+                  transition={{ delay: i * 0.1, duration: 0.5 }}
                   viewport={{ once: true }}
                 >
-                  <img
-                    src={images.riverSky}
-                    alt="Pittsburgh river"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
+                  <p className="text-gray-500 mb-2">{item.contrast}</p>
+                  <p className="text-xl font-black text-brand-reflex-blue">{item.benefit}</p>
                 </motion.div>
-
-              </div>
+              ))}
             </div>
+
+            <motion.p
+              className="text-center text-2xl sm:text-3xl font-serif font-black text-brand-pms-129"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              It's Pittsburgh, made personal.
+            </motion.p>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════════════════
+            YOU ARE THE PIONEER
+        ═══════════════════════════════════════════════════════════════════════════ */}
+        <section id="story" className="relative py-24 sm:py-32 overflow-hidden">
+          {/* Background Image */}
+          <div className="absolute inset-0">
+            <img src={images.downtown} alt="Pittsburgh skyline" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-brand-reflex-blue/90" />
           </div>
 
-          {/* Panel 3: Features with Image Background */}
-          <div id="mission" className="relative py-24 sm:py-32 overflow-hidden">
-            {/* Background Image */}
-            <div className="absolute inset-0">
-              <img
-                src={images.cityNight}
-                alt="Pittsburgh at night"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-brand-reflex-blue/90" />
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10 max-w-7xl mx-auto px-6">
+          <div className="relative z-10 max-w-6xl mx-auto px-6">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Text Content */}
               <motion.div
-                className="text-center mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <h3 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black text-white leading-tight">
-                  Everything you need to{' '}
-                  <span className="text-brand-pms-129 italic">thrive</span>
-                </h3>
-                <p className="mt-6 text-lg text-white/70 max-w-2xl mx-auto">
-                  The platform saves countless hours of search time and yields better results.
+                <h2 className="text-4xl sm:text-5xl font-serif font-black text-white leading-tight mb-8">
+                  You Are the{' '}
+                  <span className="text-brand-pms-129 italic">Pioneer</span>
+                </h2>
+                <p className="text-xl text-white/90 leading-relaxed mb-6">
+                  You're not just moving — you're starting something new. A new job. A new school. A new home. And maybe even a new language or culture. That takes courage.
+                </p>
+                <p className="text-lg text-white/70 leading-relaxed">
+                  We built Pittsburgh Tomorrow Pioneer to support you — because you are the Pioneer. This site is here to walk alongside you as you build a future in Pittsburgh.
                 </p>
               </motion.div>
 
-              {/* Feature Cards Grid */}
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  {
-                    icon: <Globe className="w-6 h-6" />,
-                    title: 'Multilingual Support',
-                    desc: 'Available in 7+ languages including Spanish, Arabic, Mandarin, Swahili, and Uzbek.',
-                    image: images.adobeFamily,
-                  },
-                  {
-                    icon: <Heart className="w-6 h-6" />,
-                    title: 'Personalized Roadmap',
-                    desc: 'Fill out a brief intake form and get a custom personalized roadmap based on your needs.',
-                    image: images.bridgeSunshine,
-                  },
-                  {
-                    icon: <Sparkles className="w-6 h-6" />,
-                    title: 'AI-Powered Assistant',
-                    desc: 'Meet Bridgit, our AI assistant providing automatic support in over 89 languages.',
-                    image: images.ppgWithBridge,
-                  },
-                ].map((feature, i) => (
-                  <motion.div
-                    key={i}
-                    className="group relative h-80 rounded-3xl overflow-hidden cursor-pointer"
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.15, duration: 0.6 }}
-                    viewport={{ once: true }}
-                    whileHover={{ y: -8 }}
-                  >
-                    {/* Background Image */}
-                    <img
-                      src={feature.image}
-                      alt={feature.title}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-brand-reflex-blue via-brand-reflex-blue/60 to-transparent" />
-
-                    {/* Content */}
-                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                      <div className="w-12 h-12 bg-brand-pms-129 rounded-2xl flex items-center justify-center text-brand-reflex-blue mb-4 group-hover:scale-110 transition-transform">
-                        {feature.icon}
-                      </div>
-                      <h4 className="text-xl font-black text-white mb-2">{feature.title}</h4>
-                      <p className="text-white/70 text-sm leading-relaxed">{feature.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Panel 4: Second Quote - Cinematic */}
-          <div className="relative py-32 sm:py-40">
-            {/* Background Image with Mask */}
-            <motion.div
-              className="absolute inset-0"
-              initial={{ scale: 1.1 }}
-              whileInView={{ scale: 1 }}
-              transition={{ duration: 1.5 }}
-              viewport={{ once: true }}
-            >
-              <img
-                src={images.schenleyPark}
-                alt="Schenley Park"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-white via-white/50 to-white" />
-            </motion.div>
-
-            {/* Content */}
-            <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+              {/* Image */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+                className="relative"
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
                 viewport={{ once: true }}
               >
-                <Quote className="w-16 h-16 text-brand-pms-129 mx-auto mb-8 opacity-50" />
-                <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-serif text-brand-reflex-blue leading-relaxed">
-                  "Growing up in Allegheny County, I saw firsthand the incredible history and resilience of Pittsburgh. Pittsburgh Tomorrow Pioneer is the perfect example of how innovation can be used to build a stronger community, welcome newcomers, and secure the city's future."
-                </blockquote>
-                <div className="mt-8 flex items-center justify-center gap-4">
-                  <div className="w-16 h-[2px] bg-brand-pms-129" />
-                  <div className="text-center">
-                    <div className="font-black text-brand-reflex-blue text-lg">Jim Schwoebel</div>
-                    <div className="text-gray-500 text-sm">Founder & CEO, Quome</div>
-                  </div>
-                  <div className="w-16 h-[2px] bg-brand-pms-129" />
+                <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
+                  <img
+                    src={images.neighborhoodHill}
+                    alt="Pittsburgh neighborhood hillside"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="absolute -bottom-4 -left-4 bg-brand-pms-129 text-brand-reflex-blue px-6 py-3 rounded-lg font-black text-sm">
+                  90 Neighborhoods
                 </div>
               </motion.div>
             </div>
@@ -563,11 +269,10 @@ export function HomePage() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════════════
-            RESOURCES SECTION
+            HOW PIONEER HELPS - Features
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="resources" className="py-20 sm:py-32 bg-white">
-          <div className="max-w-7xl mx-auto px-6">
-            {/* Header */}
+        <section id="mission" className="py-20 sm:py-28 bg-gray-50">
+          <div className="max-w-6xl mx-auto px-6">
             <motion.div
               className="text-center mb-16"
               initial={{ opacity: 0, y: 30 }}
@@ -575,48 +280,129 @@ export function HomePage() {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-brand-reflex-blue/5 rounded-full mb-6">
-                <Sparkles className="w-4 h-4 text-brand-pms-129" />
-                <span className="text-[9px] uppercase tracking-[0.3em] font-black text-brand-reflex-blue">{t('homepage.sixModules', 'Six Essential Modules')}</span>
-              </div>
-              <h3 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black text-brand-reflex-blue">{t('homepage.personalGuide', 'Your Personal Guide')}</h3>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-brand-reflex-blue mb-4">
+                How Pittsburgh Tomorrow Pioneer Helps
+              </h2>
             </motion.div>
 
-            {/* Feature Cards Grid */}
+            {/* Features Grid */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { title: t('homepage.featureLiving', 'Living Essentials'), icon: <Home />, desc: t('homepage.featureLivingDesc', 'Housing, utilities, healthcare, and everything you need to settle in.'), color: 'from-blue-500 to-blue-600', link: '/resources/living-essentials' },
-                { title: t('homepage.featureCommunity', 'Community And Belonging'), icon: <Users />, desc: t('homepage.featureCommunityDesc', 'Find your faith, your hobby, and your local neighborhood council.'), color: 'from-purple-500 to-purple-600', link: '/resources/community-belonging' },
-                { title: t('homepage.featureEducation', 'Education: Adult And Youth'), icon: <BookOpen />, desc: t('homepage.featureEducationDesc', 'Navigating the Pittsburgh school system with ease.'), color: 'from-green-500 to-green-600', link: '/resources/education-youth' },
-                { title: t('homepage.featureESL', 'ESL And Immigrant Support'), icon: <Globe />, desc: t('homepage.featureESLDesc', 'Connecting you with local translators and ESL programs.'), color: 'from-orange-500 to-orange-600', link: '/resources/esl-immigrant' },
-                { title: t('homepage.featureJobs', 'Jobs And Business Resources'), icon: <CheckCircle2 />, desc: t('homepage.featureJobsDesc', 'Career services, job boards, and business resources.'), color: 'from-pink-500 to-pink-600', link: '/resources/work-business' },
-                { title: t('homepage.featureCulture', 'Culture, Arts And Fun'), icon: <Camera />, desc: t('homepage.featureCultureDesc', 'Museums, events, parks, and entertainment in the Steel City.'), color: 'from-teal-500 to-teal-600', link: '/resources/culture-leisure' },
-              ].map((item, idx) => (
+                {
+                  icon: <Globe className="w-6 h-6" />,
+                  title: "Made for You — Wherever You're From",
+                  desc: "We know not everyone speaks English as their first language. That's why Pittsburgh Tomorrow Pioneer supports dozens of global languages, including Spanish, Arabic, French, Chinese, Dari, and more. If you type in your native language, Pioneer will respond in kind.",
+                },
+                {
+                  icon: <Map className="w-6 h-6" />,
+                  title: 'Create Your Personal Roadmap',
+                  desc: "Our most powerful tool is your personalized roadmap — a checklist made just for you. By answering a few simple questions about your needs, Pioneer creates a tailored action plan. View and update anytime, save your progress, download or print your checklist.",
+                },
+                {
+                  icon: <MessageCircle className="w-6 h-6" />,
+                  title: 'Smart, Self-Guided Support',
+                  desc: "Pioneer features a friendly AI chatbot trained to answer hundreds of common questions. It can guide you to resources, explain how local systems work, and help you take the next step.",
+                },
+                {
+                  icon: <Heart className="w-6 h-6" />,
+                  title: 'Trusted Partners',
+                  desc: "Access our complete directory of trusted partners — public agencies, nonprofits, and service providers throughout Pittsburgh and Allegheny County. Our network includes 380+ not-for-profit organizations ready to help with your specific needs.",
+                },
+                {
+                  icon: <Shield className="w-6 h-6" />,
+                  title: 'Your Privacy, Protected',
+                  desc: "Your privacy and security matter to us. If you choose to create an account, your personal data is protected by SOC II-compliant security protocols. We will never sell or share your data. You remain in full control of your information at all times.",
+                },
+                {
+                  icon: <CheckCircle2 className="w-6 h-6" />,
+                  title: 'Free & Comprehensive',
+                  desc: "Pittsburgh Tomorrow Pioneer is completely free to use. Whether you're finding housing, enrolling your child in school, learning English, or looking to meet people who share your faith, language, or interests — we've got you covered.",
+                },
+              ].map((feature, i) => (
                 <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 30 }}
+                  key={i}
+                  className="bg-white p-8 rounded-2xl border border-gray-100 hover:shadow-lg hover:border-brand-pms-129/30 transition-all duration-300"
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  transition={{ delay: i * 0.1, duration: 0.5 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="w-12 h-12 bg-brand-reflex-blue rounded-xl flex items-center justify-center text-white mb-5">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-lg font-black text-brand-reflex-blue mb-3">{feature.title}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">{feature.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <motion.div
+              className="text-center mt-12"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <Link
+                to="/screening"
+                className="group inline-flex items-center gap-3 bg-brand-pms-129 text-brand-reflex-blue px-8 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.2em] hover:shadow-lg transition-all duration-300"
+              >
+                <span>Create Your Roadmap</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════════════════
+            RESOURCES SECTION
+        ═══════════════════════════════════════════════════════════════════════════ */}
+        <section id="resources" className="py-20 sm:py-28 bg-white">
+          <div className="max-w-6xl mx-auto px-6">
+            <motion.div
+              className="text-center mb-12"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl sm:text-4xl font-serif font-black text-brand-reflex-blue mb-4">
+                Browse Resources
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Explore at your own pace with our complete resource library — no login required.
+              </p>
+            </motion.div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                { title: t('homepage.featureLiving', 'Living Essentials'), icon: <Home className="w-5 h-5" />, desc: 'Housing, utilities, healthcare', link: '/resources/living-essentials', color: 'bg-blue-500' },
+                { title: t('homepage.featureCommunity', 'Community & Belonging'), icon: <Users className="w-5 h-5" />, desc: 'Faith, hobbies, neighborhood councils', link: '/resources/community-belonging', color: 'bg-purple-500' },
+                { title: t('homepage.featureEducation', 'Education'), icon: <BookOpen className="w-5 h-5" />, desc: 'Schools for adults and youth', link: '/resources/education-youth', color: 'bg-green-500' },
+                { title: t('homepage.featureESL', 'ESL & Immigrant Support'), icon: <Globe className="w-5 h-5" />, desc: 'Language classes, legal aid', link: '/resources/esl-immigrant', color: 'bg-orange-500' },
+                { title: t('homepage.featureJobs', 'Jobs & Business'), icon: <CheckCircle2 className="w-5 h-5" />, desc: 'Career services, job boards', link: '/resources/work-business', color: 'bg-pink-500' },
+                { title: t('homepage.featureCulture', 'Culture & Fun'), icon: <Camera className="w-5 h-5" />, desc: 'Arts, events, entertainment', link: '/resources/culture-leisure', color: 'bg-teal-500' },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.4 }}
                   viewport={{ once: true }}
                 >
                   <Link
                     to={item.link}
-                    className="group block bg-white p-8 rounded-3xl border border-gray-100 hover:border-brand-pms-129/30 hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2"
+                    className="group flex items-center gap-4 p-5 bg-gray-50 rounded-xl hover:bg-white hover:shadow-md transition-all duration-300 border border-transparent hover:border-gray-100"
                   >
-                    {/* Icon */}
-                    <div className={`w-14 h-14 bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
+                    <div className={`w-10 h-10 ${item.color} rounded-lg flex items-center justify-center text-white flex-shrink-0`}>
                       {item.icon}
                     </div>
-
-                    {/* Content */}
-                    <h4 className="text-xl font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors">{item.title}</h4>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-6">{item.desc}</p>
-
-                    {/* CTA */}
-                    <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors">
-                      <span>Explore</span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors text-sm">{item.title}</h3>
+                      <p className="text-gray-500 text-xs">{item.desc}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-pms-129 group-hover:translate-x-1 transition-all flex-shrink-0" />
                   </Link>
                 </motion.div>
               ))}
@@ -625,55 +411,48 @@ export function HomePage() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════════════
-            GALLERY SECTION - Masonry photo grid
+            GALLERY - Discover Pittsburgh
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="gallery" className="py-20 sm:py-32 bg-brand-reflex-blue">
-          <div className="max-w-7xl mx-auto px-6">
-            {/* Header */}
+        <section id="gallery" className="py-20 sm:py-28 bg-brand-reflex-blue">
+          <div className="max-w-6xl mx-auto px-6">
             <motion.div
-              className="text-center mb-16"
+              className="text-center mb-12"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 rounded-full mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full mb-4">
                 <Camera className="w-4 h-4 text-brand-pms-129" />
-                <span className="text-[9px] uppercase tracking-[0.3em] font-black text-white/80">Explore the City</span>
+                <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-white/80">Explore the City</span>
               </div>
-              <h3 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black text-white">
+              <h2 className="text-3xl sm:text-4xl font-serif font-black text-white">
                 Discover <span className="text-brand-pms-129">Pittsburgh</span>
-              </h3>
+              </h2>
             </motion.div>
 
-            {/* Photo Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { src: images.downtown, span: 'col-span-2 row-span-2', title: 'Downtown', location: 'Point State Park' },
-                { src: images.yellowBridgeNight, span: 'col-span-1 row-span-1', title: 'City Lights', location: 'North Shore' },
-                { src: images.ppgPlace, span: 'col-span-1 row-span-1', title: 'PPG Place', location: 'Downtown' },
-                { src: images.yellowBridgeRoad, span: 'col-span-1 row-span-1', title: 'Bridge Road', location: 'Clemente Bridge' },
-                { src: images.neighborhoodHill, span: 'col-span-1 row-span-1', title: 'Neighborhoods', location: 'Aspinwall' },
+                { src: images.downtown, span: 'col-span-2 row-span-2' },
+                { src: images.yellowBridgeNight, span: '' },
+                { src: images.ppgPlace, span: '' },
+                { src: images.bridgeSunshine, span: '' },
+                { src: images.neighborhoodHill, span: '' },
               ].map((photo, i) => (
                 <motion.div
                   key={i}
-                  className={`${photo.span} relative rounded-2xl overflow-hidden group cursor-pointer aspect-square`}
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  className={`${photo.span} relative rounded-xl overflow-hidden group cursor-pointer aspect-square`}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
+                  transition={{ delay: i * 0.1, duration: 0.4 }}
                   viewport={{ once: true }}
-                  whileHover={{ scale: 1.02 }}
                 >
                   <img
                     src={photo.src}
-                    alt={photo.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    alt="Pittsburgh"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-                    <div className="text-[8px] uppercase tracking-[0.2em] text-brand-pms-129">{photo.location}</div>
-                    <div className="font-bold">{photo.title}</div>
-                  </div>
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-300" />
                 </motion.div>
               ))}
             </div>
@@ -681,40 +460,84 @@ export function HomePage() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════════════
+            ABOUT PITTSBURGH TOMORROW (Bottom)
+        ═══════════════════════════════════════════════════════════════════════════ */}
+        <section className="py-20 sm:py-28 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-reflex-blue/5 rounded-full mb-6">
+                <Building2 className="w-4 h-4 text-brand-reflex-blue" />
+                <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-brand-reflex-blue">Our Organization</span>
+              </div>
+
+              <h2 className="text-3xl sm:text-4xl font-serif font-black text-brand-reflex-blue mb-8">
+                About Pittsburgh Tomorrow
+              </h2>
+
+              <div className="text-left space-y-6 text-gray-600 leading-relaxed">
+                <p>
+                  Pittsburgh Tomorrow Pioneer is an initiative of <strong className="text-brand-reflex-blue">Pittsburgh Tomorrow</strong>, a nonprofit organization on a mission to grow Pittsburgh. We're catalyzing the new spirit that's redefining what historian David McCullough called "America's Indispensable City."
+                </p>
+
+                <p>
+                  The region that built America from the ground up is surging with a new vitality and civic spirit: welcoming newcomers, launching entrepreneurs, and blazing new trails. Our movement is powered by a new wave of pioneers, first-movers, and risk-takers who are seizing opportunity and building the future — in Pittsburgh.
+                </p>
+
+                <p>
+                  At Pittsburgh Tomorrow, we're on a mission to grow Pittsburgh. And that doesn't just mean population or economic growth; it means revitalizing our city's spirit. Supporting small businesses and entrepreneurs. Beautifying and preserving our environment. Promoting arts and culture. Welcoming newcomers and creating community. Being proud of our city, and putting it back on the map.
+                </p>
+              </div>
+
+              <div className="mt-10 pt-10 border-t border-gray-200">
+                <a
+                  href="https://pittsburghtomorrow.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-brand-reflex-blue hover:text-brand-pms-129 font-bold text-sm transition-colors"
+                >
+                  <span>Learn more about Pittsburgh Tomorrow</span>
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════════════════
             FINAL CTA
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section className="relative py-32 overflow-hidden">
-          {/* Background Image */}
+        <section className="relative py-24 overflow-hidden">
           <div className="absolute inset-0">
-            <img
-              src={images.adobeYellowBridge}
-              alt="Pittsburgh Yellow Bridge"
-              className="w-full h-full object-cover"
-            />
+            <img src={images.cityNight} alt="Pittsburgh at night" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-brand-reflex-blue/90" />
           </div>
 
-          {/* Content */}
           <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black text-white leading-tight mb-8">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-white leading-tight mb-6">
                 Ready to start your{' '}
                 <span className="text-brand-pms-129 italic">Pittsburgh journey?</span>
               </h2>
-              <p className="text-xl text-white/70 mb-10 max-w-2xl mx-auto">
-                Get your personalized guide in minutes. It's free, private, and available in 7+ languages.
+              <p className="text-lg text-white/70 mb-8 max-w-2xl mx-auto">
+                Create your personalized roadmap in minutes. It's free, private, and available in dozens of languages.
               </p>
               <Link
                 to="/screening"
-                className="group inline-flex items-center gap-4 bg-brand-pms-129 text-brand-reflex-blue px-12 py-6 rounded-full text-[11px] font-black uppercase tracking-[0.2em] hover:shadow-[0_0_60px_rgba(244,179,61,0.5)] transition-all duration-500 hover:scale-105"
+                className="group inline-flex items-center gap-3 bg-brand-pms-129 text-brand-reflex-blue px-10 py-5 rounded-full text-[11px] font-black uppercase tracking-[0.2em] hover:shadow-[0_0_40px_rgba(244,179,61,0.5)] transition-all duration-500 hover:scale-105"
               >
-                <span>Get Your Free Guide</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                <span>Create Your Roadmap</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
           </div>
