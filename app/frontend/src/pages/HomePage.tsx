@@ -2,9 +2,6 @@ import { Link, useLocation } from 'react-router-dom'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import {
   ArrowRight,
-  Home,
-  BookOpen,
-  Users,
   CheckCircle2,
   Globe,
   Sparkles,
@@ -143,7 +140,7 @@ export function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════════
             HERO - Welcome & Purpose
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="hero" className="relative min-h-screen flex items-center pt-24 md:pt-28">
+        <section id="hero" className="relative min-h-screen">
           {/* Background */}
           <motion.div className="absolute inset-0 scale-110" style={{ y: heroY }}>
             <img src={images.hero} alt="Pittsburgh skyline at sunset" className="w-full h-full object-cover" />
@@ -151,7 +148,7 @@ export function HomePage() {
           </motion.div>
 
           {/* Content */}
-          <div className="relative z-10 max-w-6xl mx-auto px-6 py-16 md:py-24">
+          <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 md:pt-40 pb-24">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -208,81 +205,10 @@ export function HomePage() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════════════
-            WHY PITTSBURGH TOMORROW PIONEER
+            YOU ARE THE PIONEER (THE STORY)
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="why" className="py-20 sm:py-28 bg-white scroll-mt-24">
+        <section id="story" className="relative py-24 sm:py-32 bg-white scroll-mt-24">
           <div className="max-w-6xl mx-auto px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-brand-reflex-blue leading-tight mb-6">
-                Why Pittsburgh Tomorrow Pioneer?
-              </h2>
-              <p className="text-2xl sm:text-3xl text-brand-pms-129 font-serif italic mb-8">
-                Because starting fresh in a new city shouldn't mean starting from scratch.
-              </p>
-              <p className="text-lg text-gray-600 leading-relaxed max-w-4xl mx-auto">
-                Pittsburgh Tomorrow Pioneer brings together everything you need to start a new life in Pittsburgh and Allegheny County — all in one trusted, easy-to-use place. It's free, comprehensive, and designed to save you hours of searching, comparing, and second-guessing.
-              </p>
-            </motion.div>
-
-            {/* Comparison Points */}
-            <div className="grid md:grid-cols-3 gap-8 mb-16">
-              {[
-                {
-                  contrast: 'Where a Google search shows you everything,',
-                  benefit: 'Pioneer shows you exactly what matters.',
-                },
-                {
-                  contrast: 'Where an AI chatbot offers answers,',
-                  benefit: 'Pioneer gives you a roadmap.',
-                },
-                {
-                  contrast: 'Where most relocation tools stop at logistics,',
-                  benefit: 'Pioneer starts with community.',
-                },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  className="text-center p-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                  viewport={{ once: true }}
-                >
-                  <p className="text-gray-500 mb-2">{item.contrast}</p>
-                  <p className="text-xl font-black text-brand-reflex-blue">{item.benefit}</p>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.p
-              className="text-center text-2xl sm:text-3xl font-serif font-black text-brand-pms-129"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              It's Pittsburgh, made personal.
-            </motion.p>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════════════
-            YOU ARE THE PIONEER
-        ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="story" className="relative py-24 sm:py-32 overflow-hidden scroll-mt-24">
-          {/* Background Image */}
-          <div className="absolute inset-0">
-            <img src={images.downtown} alt="Pittsburgh skyline" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-brand-reflex-blue/90" />
-          </div>
-
-          <div className="relative z-10 max-w-6xl mx-auto px-6">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Text Content */}
               <motion.div
@@ -291,14 +217,18 @@ export function HomePage() {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <h2 className="text-4xl sm:text-5xl font-serif font-black text-white leading-tight mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-reflex-blue/5 rounded-full mb-6">
+                  <Sparkles className="w-4 h-4 text-brand-pms-129" />
+                  <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-brand-reflex-blue/70">The Pioneer Story</span>
+                </div>
+                <h2 className="text-4xl sm:text-5xl font-serif font-black text-brand-reflex-blue leading-tight mb-8">
                   You Are the{' '}
                   <span className="text-brand-pms-129 italic">Pioneer</span>
                 </h2>
-                <p className="text-xl text-white/90 leading-relaxed mb-6">
+                <p className="text-xl text-gray-700 leading-relaxed mb-6">
                   You're not just moving — you're starting something new. A new job. A new school. A new home. And maybe even a new language or culture. That takes courage.
                 </p>
-                <p className="text-lg text-white/70 leading-relaxed">
+                <p className="text-lg text-gray-500 leading-relaxed">
                   We built Pittsburgh Tomorrow Pioneer to support you — because you are the Pioneer. This site is here to walk alongside you as you build a future in Pittsburgh.
                 </p>
               </motion.div>
@@ -311,14 +241,14 @@ export function HomePage() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 viewport={{ once: true }}
               >
-                <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
+                <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl ring-1 ring-gray-200">
                   <img
                     src={images.neighborhoodHill}
                     alt="Pittsburgh neighborhood hillside"
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="absolute -bottom-4 -left-4 bg-brand-pms-129 text-brand-reflex-blue px-6 py-3 rounded-lg font-black text-sm">
+                <div className="absolute -bottom-4 -left-4 bg-brand-pms-129 text-brand-reflex-blue px-6 py-3 rounded-lg font-black text-sm shadow-lg">
                   90 Neighborhoods
                 </div>
               </motion.div>
@@ -327,20 +257,26 @@ export function HomePage() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════════════
-            HOW PIONEER HELPS - Features
+            HOW PIONEER HELPS - Features (Consolidated with Why section)
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="mission" className="py-20 sm:py-28 bg-gray-50 scroll-mt-24">
+        <section id="why" className="py-20 sm:py-28 bg-gray-50 scroll-mt-24">
           <div className="max-w-6xl mx-auto px-6">
             <motion.div
-              className="text-center mb-16"
+              className="text-center mb-12"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-brand-reflex-blue mb-4">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-brand-reflex-blue leading-tight mb-4">
                 How Pittsburgh Tomorrow Pioneer Helps
               </h2>
+              <p className="text-xl sm:text-2xl text-brand-pms-129 font-serif italic mb-6">
+                Because starting fresh in a new city shouldn't mean starting from scratch.
+              </p>
+              <p className="text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto">
+                Everything you need to start a new life in Pittsburgh — all in one trusted, easy-to-use place.
+              </p>
             </motion.div>
 
             {/* Features Grid */}
@@ -410,61 +346,6 @@ export function HomePage() {
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════════════
-            RESOURCES SECTION
-        ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="resources" className="py-20 sm:py-28 bg-white scroll-mt-24">
-          <div className="max-w-6xl mx-auto px-6">
-            <motion.div
-              className="text-center mb-12"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl sm:text-4xl font-serif font-black text-brand-reflex-blue mb-4">
-                Browse Resources
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Explore at your own pace with our complete resource library — no login required.
-              </p>
-            </motion.div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                { title: t('homepage.featureLiving', 'Living Essentials'), icon: <Home className="w-5 h-5" />, desc: 'Housing, utilities, healthcare', link: '/resources/living-essentials', color: 'bg-blue-500' },
-                { title: t('homepage.featureCommunity', 'Community & Belonging'), icon: <Users className="w-5 h-5" />, desc: 'Faith, hobbies, neighborhood councils', link: '/resources/community-belonging', color: 'bg-purple-500' },
-                { title: t('homepage.featureEducation', 'Education'), icon: <BookOpen className="w-5 h-5" />, desc: 'Schools for adults and youth', link: '/resources/education-youth', color: 'bg-green-500' },
-                { title: t('homepage.featureESL', 'ESL & Immigrant Support'), icon: <Globe className="w-5 h-5" />, desc: 'Language classes, legal aid', link: '/resources/esl-immigrant', color: 'bg-orange-500' },
-                { title: t('homepage.featureJobs', 'Jobs & Business'), icon: <CheckCircle2 className="w-5 h-5" />, desc: 'Career services, job boards', link: '/resources/work-business', color: 'bg-pink-500' },
-                { title: t('homepage.featureCulture', 'Culture & Fun'), icon: <Camera className="w-5 h-5" />, desc: 'Arts, events, entertainment', link: '/resources/culture-leisure', color: 'bg-teal-500' },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.4 }}
-                  viewport={{ once: true }}
-                >
-                  <Link
-                    to={item.link}
-                    className="group flex items-center gap-4 p-5 bg-gray-50 rounded-xl hover:bg-white hover:shadow-md transition-all duration-300 border border-transparent hover:border-gray-100"
-                  >
-                    <div className={`w-10 h-10 ${item.color} rounded-lg flex items-center justify-center text-white flex-shrink-0`}>
-                      {item.icon}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors text-sm">{item.title}</h3>
-                      <p className="text-gray-500 text-xs">{item.desc}</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-pms-129 group-hover:translate-x-1 transition-all flex-shrink-0" />
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
           </div>
         </section>
 

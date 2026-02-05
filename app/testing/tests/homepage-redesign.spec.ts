@@ -28,17 +28,6 @@ test.describe('Homepage Redesign', () => {
     await expect(resourcesBtn).toBeVisible();
   });
 
-  test('Why section explains the purpose', async ({ page }) => {
-    // Scroll to why section
-    await page.locator('#why').scrollIntoViewIfNeeded();
-    await page.waitForTimeout(500);
-
-    // Check for key content
-    const whyText = await page.locator('#why').textContent();
-    expect(whyText).toContain('Why Pittsburgh Tomorrow Pioneer');
-    expect(whyText).toContain('starting from scratch');
-  });
-
   test('Story section has You Are the Pioneer content', async ({ page }) => {
     // Scroll to story section
     await page.locator('#story').scrollIntoViewIfNeeded();
@@ -52,42 +41,25 @@ test.describe('Homepage Redesign', () => {
     expect(storyText).toContain('Pioneer');
   });
 
-  test('feature cards link to internal resources with correct category IDs', async ({ page }) => {
-    // Scroll to resources section
-    await page.locator('#resources').scrollIntoViewIfNeeded();
-    await page.waitForTimeout(500);
-
-    // Check feature card links are internal (start with /resources)
-    const featureLinks = page.locator('a[href^="/resources/"]');
-    const count = await featureLinks.count();
-
-    expect(count).toBeGreaterThan(0);
-
-    // Verify links use correct category IDs from taxonomy
-    const expectedCategories = [
-      'living-essentials',
-      'community-belonging',
-      'education-youth',
-      'esl-immigrant',
-      'work-business',
-      'culture-leisure'
-    ];
-
-    for (let i = 0; i < Math.min(count, expectedCategories.length); i++) {
-      const link = featureLinks.nth(i);
-      const href = await link.getAttribute('href');
-      expect(href).toContain(expectedCategories[i]);
-    }
-  });
-
   test('How Pioneer Helps section displays features', async ({ page }) => {
-    // Scroll to mission section
-    await page.locator('#mission').scrollIntoViewIfNeeded();
+    // Scroll to why/features section (consolidated)
+    await page.locator('#why').scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
 
     // Check for feature content
-    const missionText = await page.locator('#mission').textContent();
-    expect(missionText).toContain('How Pittsburgh Tomorrow Pioneer Helps');
+    const whyText = await page.locator('#why').textContent();
+    expect(whyText).toContain('How Pittsburgh Tomorrow Pioneer Helps');
+    expect(whyText).toContain('starting from scratch');
+  });
+
+  test('Resources navigation links to resources page', async ({ page }) => {
+    // Click on Resources nav link
+    const resourcesLink = page.locator('nav a[href="/resources"]').first();
+    await expect(resourcesLink).toBeVisible();
+
+    // Verify it links to the resources page (not a section)
+    const href = await resourcesLink.getAttribute('href');
+    expect(href).toBe('/resources');
   });
 
   test('no external pittsburghpioneer.com links in visible navigation', async ({ page }) => {
