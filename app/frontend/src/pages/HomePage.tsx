@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { Link, useLocation } from 'react-router-dom'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import {
   ArrowRight,
   Home,
@@ -14,11 +14,13 @@ import {
   MessageCircle,
   Heart,
   Building2,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { SEO } from '@/components/SEO'
 import { StructuredData } from '@/components/StructuredData'
-import { useRef } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 
 // Pittsburgh images
 const images = {
@@ -30,14 +32,71 @@ const images = {
   ppgPlace: '/Copy of AdobeStock_392745144PPGplaceglass_building.jpeg',
   bridgeSunshine: '/Copy of willie-shaw-64iuIOektb4-unsplashyellowbridgeroadviewwithsunshiningthrough.jpg',
   yellowBridgeNight: '/Copy of jason-pischke-YfoxivJxNT4-yellowbridgeatnight.jpg',
+  riverReflection: '/Copy of jocelyn-allen-0Orb6gDDn4g-unsplashriverwithskyreflectedonwater.jpg',
+  pgaPlace: '/Copy of jocelyn-allen-AgpI111Z4Ys-unsplashPGAplacewithyellowbridgecuttinginfront.jpg',
+  schenleyPark: '/Copy of nathan-kelly-U3eEA6puoA4-unsplashschenleyparkbridgepillarsforestunderrustygreenbridge.jpg',
+  yellowBridgeRoad: '/Copy of jaime-casap-obaEBmP_CTA-yellowbridgeroad.jpg',
+  adobeBuilding: '/Copy of AdobeStock_175831629.jpeg',
+  adobeSkyline: '/Copy of AdobeStock_361619753.jpeg',
+  adobeYellowBridge: '/Copy of AdobeStock_371672182_yellow_bridge.jpeg',
 }
+
+// Gallery images for the carousel
+const galleryImages = [
+  { src: images.downtown, title: 'Downtown Pittsburgh' },
+  { src: images.yellowBridgeNight, title: 'Fort Duquesne Bridge at Night' },
+  { src: images.ppgPlace, title: 'PPG Place' },
+  { src: images.bridgeSunshine, title: 'Roberto Clemente Bridge' },
+  { src: images.neighborhoodHill, title: 'Pittsburgh Neighborhoods' },
+  { src: images.riverReflection, title: 'Rivers of Pittsburgh' },
+  { src: images.pgaPlace, title: 'PNC Park Area' },
+  { src: images.schenleyPark, title: 'Schenley Park' },
+  { src: images.yellowBridgeRoad, title: 'Iconic Yellow Bridges' },
+  { src: images.adobeSkyline, title: 'City Skyline' },
+  { src: images.adobeYellowBridge, title: 'Allegheny River Bridges' },
+  { src: images.cityNight, title: 'Pittsburgh at Night' },
+]
 
 export function HomePage() {
   const { t } = useTranslation()
+  const location = useLocation()
   const containerRef = useRef<HTMLDivElement>(null)
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
 
   const { scrollYProgress } = useScroll()
   const heroY = useTransform(scrollYProgress, [0, 0.3], ['0%', '30%'])
+
+  // Handle smooth scrolling for hash links
+  useEffect(() => {
+    if (location.hash) {
+      const element = document.querySelector(location.hash)
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, 100)
+      }
+    }
+  }, [location.hash])
+
+  // Gallery auto-play
+  useEffect(() => {
+    if (!isAutoPlaying) return
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % galleryImages.length)
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [isAutoPlaying])
+
+  const nextSlide = useCallback(() => {
+    setIsAutoPlaying(false)
+    setCurrentSlide((prev) => (prev + 1) % galleryImages.length)
+  }, [])
+
+  const prevSlide = useCallback(() => {
+    setIsAutoPlaying(false)
+    setCurrentSlide((prev) => (prev - 1 + galleryImages.length) % galleryImages.length)
+  }, [])
 
   const getBaseUrl = () => {
     if (import.meta.env.VITE_SITE_BASE_URL) return import.meta.env.VITE_SITE_BASE_URL
@@ -84,7 +143,7 @@ export function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════════
             HERO - Welcome & Purpose
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="hero" className="relative min-h-screen flex items-center">
+        <section id="hero" className="relative min-h-screen flex items-center pt-24 md:pt-28">
           {/* Background */}
           <motion.div className="absolute inset-0 scale-110" style={{ y: heroY }}>
             <img src={images.hero} alt="Pittsburgh skyline at sunset" className="w-full h-full object-cover" />
@@ -92,7 +151,7 @@ export function HomePage() {
           </motion.div>
 
           {/* Content */}
-          <div className="relative z-10 max-w-6xl mx-auto px-6 py-32">
+          <div className="relative z-10 max-w-6xl mx-auto px-6 py-16 md:py-24">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -151,7 +210,7 @@ export function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════════
             WHY PITTSBURGH TOMORROW PIONEER
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="why" className="py-20 sm:py-28 bg-white">
+        <section id="why" className="py-20 sm:py-28 bg-white scroll-mt-24">
           <div className="max-w-6xl mx-auto px-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -216,7 +275,7 @@ export function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════════
             YOU ARE THE PIONEER
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="story" className="relative py-24 sm:py-32 overflow-hidden">
+        <section id="story" className="relative py-24 sm:py-32 overflow-hidden scroll-mt-24">
           {/* Background Image */}
           <div className="absolute inset-0">
             <img src={images.downtown} alt="Pittsburgh skyline" className="w-full h-full object-cover" />
@@ -270,7 +329,7 @@ export function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════════
             HOW PIONEER HELPS - Features
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="mission" className="py-20 sm:py-28 bg-gray-50">
+        <section id="mission" className="py-20 sm:py-28 bg-gray-50 scroll-mt-24">
           <div className="max-w-6xl mx-auto px-6">
             <motion.div
               className="text-center mb-16"
@@ -357,7 +416,7 @@ export function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════════
             RESOURCES SECTION
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="resources" className="py-20 sm:py-28 bg-white">
+        <section id="resources" className="py-20 sm:py-28 bg-white scroll-mt-24">
           <div className="max-w-6xl mx-auto px-6">
             <motion.div
               className="text-center mb-12"
@@ -412,8 +471,8 @@ export function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════════
             GALLERY - Discover Pittsburgh
         ═══════════════════════════════════════════════════════════════════════════ */}
-        <section id="gallery" className="py-20 sm:py-28 bg-brand-reflex-blue">
-          <div className="max-w-6xl mx-auto px-6">
+        <section id="gallery" className="py-20 sm:py-28 bg-brand-reflex-blue overflow-hidden scroll-mt-24">
+          <div className="max-w-7xl mx-auto px-6">
             <motion.div
               className="text-center mb-12"
               initial={{ opacity: 0, y: 30 }}
@@ -430,30 +489,107 @@ export function HomePage() {
               </h2>
             </motion.div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {[
-                { src: images.downtown, span: 'col-span-2 row-span-2' },
-                { src: images.yellowBridgeNight, span: '' },
-                { src: images.ppgPlace, span: '' },
-                { src: images.bridgeSunshine, span: '' },
-                { src: images.neighborhoodHill, span: '' },
-              ].map((photo, i) => (
-                <motion.div
-                  key={i}
-                  className={`${photo.span} relative rounded-xl overflow-hidden group cursor-pointer aspect-square`}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.1, duration: 0.4 }}
-                  viewport={{ once: true }}
+            {/* Main Carousel */}
+            <div className="relative mb-8">
+              <div className="relative aspect-[16/9] md:aspect-[21/9] rounded-2xl overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentSlide}
+                    initial={{ opacity: 0, scale: 1.1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.7, ease: 'easeInOut' }}
+                    className="absolute inset-0"
+                  >
+                    <img
+                      src={galleryImages[currentSlide].src}
+                      alt={galleryImages[currentSlide].title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3, duration: 0.5 }}
+                      className="absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10"
+                    >
+                      <h3 className="text-2xl md:text-4xl font-serif font-black text-white">
+                        {galleryImages[currentSlide].title}
+                      </h3>
+                    </motion.div>
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Navigation Arrows */}
+                <button
+                  onClick={prevSlide}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
+                  aria-label="Previous image"
                 >
-                  <img
-                    src={photo.src}
-                    alt="Pittsburgh"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={nextSlide}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Progress Dots */}
+              <div className="flex justify-center gap-2 mt-6">
+                {galleryImages.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setIsAutoPlaying(false)
+                      setCurrentSlide(i)
+                    }}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      i === currentSlide
+                        ? 'w-8 bg-brand-pms-129'
+                        : 'w-2 bg-white/30 hover:bg-white/50'
+                    }`}
+                    aria-label={`Go to slide ${i + 1}`}
                   />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-300" />
-                </motion.div>
-              ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Thumbnail Strip */}
+            <div className="relative">
+              <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+                {galleryImages.map((photo, i) => (
+                  <motion.button
+                    key={i}
+                    onClick={() => {
+                      setIsAutoPlaying(false)
+                      setCurrentSlide(i)
+                    }}
+                    className={`relative flex-shrink-0 w-32 md:w-40 aspect-[4/3] rounded-lg overflow-hidden snap-center transition-all duration-300 ${
+                      i === currentSlide
+                        ? 'ring-2 ring-brand-pms-129 ring-offset-2 ring-offset-brand-reflex-blue scale-105'
+                        : 'opacity-60 hover:opacity-100'
+                    }`}
+                    whileHover={{ scale: i === currentSlide ? 1.05 : 1.08 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <img
+                      src={photo.src}
+                      alt={photo.title}
+                      className="w-full h-full object-cover"
+                    />
+                    {i === currentSlide && (
+                      <motion.div
+                        layoutId="thumbnail-highlight"
+                        className="absolute inset-0 bg-brand-pms-129/20"
+                        transition={{ duration: 0.3 }}
+                      />
+                    )}
+                  </motion.button>
+                ))}
+              </div>
             </div>
           </div>
         </section>
