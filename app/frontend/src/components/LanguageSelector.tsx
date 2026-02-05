@@ -75,22 +75,22 @@ export function LanguageSelector() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="flex items-center gap-2 text-brand-reflex-blue hover:text-white hover:bg-brand-pms-285 interactive-element transition-all duration-200 touch-target p-2"
-          style={{ minHeight: '44px', minWidth: '44px' }}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex items-center gap-2 text-white hover:text-brand-pms-129 hover:bg-white/10 interactive-element transition-all duration-300 touch-target px-3 py-2 rounded-full border border-white/20 hover:border-brand-pms-129/50"
+          style={{ minHeight: '40px' }}
           aria-label={t('common.selectLanguage')}
         >
-          <Globe className="h-5 w-5" />
-          <span className="text-sm brand-accent hidden lg:inline">{currentLanguage.nativeName}</span>
+          <Globe className="h-4 w-4" />
+          <span className="text-[11px] font-bold uppercase tracking-wide hidden lg:inline">{currentLanguage.code.toUpperCase()}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="center" 
+      <DropdownMenuContent
+        align="end"
         side="bottom"
-        className="w-36 sm:w-32 border-brand-pms-285/20 shadow-lg bg-white/95 backdrop-blur-sm max-h-[70vh] overflow-y-auto"
-        sideOffset={4}
+        className="w-48 border-0 shadow-2xl bg-brand-reflex-blue/95 backdrop-blur-md max-h-[70vh] overflow-y-auto rounded-xl p-2"
+        sideOffset={8}
         avoidCollisions={true}
         collisionPadding={8}
       >
@@ -98,16 +98,21 @@ export function LanguageSelector() {
           <DropdownMenuItem
             key={language.code}
             onClick={() => changeLanguage(language.code)}
-            className={`interactive-element transition-colors duration-200 cursor-pointer ${
-              i18n.language === language.code 
-                ? 'bg-brand-pms-290 text-brand-reflex-blue font-medium' 
-                : 'hover:bg-brand-pms-290 hover:text-brand-reflex-blue'
+            className={`interactive-element transition-all duration-200 cursor-pointer rounded-lg mb-1 last:mb-0 ${
+              i18n.language === language.code
+                ? 'bg-brand-pms-129 text-brand-reflex-blue'
+                : 'text-white/80 hover:bg-white/10 hover:text-white'
             }`}
-            style={{ minHeight: '48px' }}
+            style={{ minHeight: '44px' }}
           >
-            <div className="flex flex-col py-1 px-1">
-              <span className="text-sm font-medium brand-accent leading-tight">{language.nativeName}</span>
-              <span className="text-xs text-brand-pms-285/80 brand-accent leading-tight">{language.name}</span>
+            <div className="flex items-center justify-between w-full py-1 px-2">
+              <div className="flex flex-col">
+                <span className="text-sm font-bold leading-tight">{language.nativeName}</span>
+                <span className={`text-[10px] leading-tight ${i18n.language === language.code ? 'text-brand-reflex-blue/70' : 'text-white/50'}`}>{language.name}</span>
+              </div>
+              {i18n.language === language.code && (
+                <div className="w-2 h-2 rounded-full bg-brand-reflex-blue" />
+              )}
             </div>
           </DropdownMenuItem>
         ))}

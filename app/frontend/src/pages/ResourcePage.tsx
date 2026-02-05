@@ -86,7 +86,7 @@ export function ResourcePage() {
 
       <main className="min-h-screen bg-white pt-24">
         {/* Hero Header */}
-        <section className="bg-brand-reflex-blue py-16 sm:py-20 relative overflow-hidden">
+        <section className="bg-brand-reflex-blue py-10 sm:py-12 relative overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
             <div className="absolute inset-0" style={{
@@ -97,27 +97,17 @@ export function ResourcePage() {
           </div>
 
           <div className="container max-w-6xl mx-auto px-6 relative z-10">
-            {/* Badge */}
-            <div className="flex justify-center mb-8">
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-                <Sparkles className="w-4 h-4 text-brand-pms-129" />
-                <span className="text-[9px] uppercase tracking-[0.3em] font-black text-white/80">
-                  {t('toolkit.badge', '500+ Vetted Resources')}
-                </span>
-              </div>
-            </div>
-
-            <header className="text-center mb-12">
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 leading-[1.1]">
+            <header className="text-center mb-6">
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-3 leading-[1.1]">
                 {t('toolkit.title', 'Resource')} <span className="text-brand-pms-129 italic">{t('toolkit.titleAccent', 'Toolkit')}</span>
               </h1>
-              <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto font-light leading-relaxed">
+              <p className="text-base text-white/70 max-w-2xl mx-auto font-light leading-relaxed">
                 {t('toolkit.description', 'Everything you need to settle and thrive in Pittsburgh, organized by category and vetted by our community partners.')}
               </p>
             </header>
 
             {/* Search Bar */}
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-xl mx-auto">
               <GlobalResourceSearch />
             </div>
           </div>
@@ -178,13 +168,13 @@ export function ResourcePage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 sm:py-20 bg-gradient-to-b from-gray-50 to-white">
-          <div className="container max-w-4xl mx-auto px-6">
+        <section className="py-10 sm:py-12 bg-gradient-to-b from-gray-50 to-white">
+          <div className="container max-w-3xl mx-auto px-6">
             <motion.div
-              className="text-center p-12 sm:p-16 rounded-3xl bg-brand-reflex-blue relative overflow-hidden"
-              initial={{ opacity: 0, y: 30 }}
+              className="flex flex-col sm:flex-row items-center justify-between gap-6 p-6 sm:p-8 rounded-2xl bg-brand-reflex-blue relative overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             >
               {/* Background Pattern */}
@@ -195,21 +185,21 @@ export function ResourcePage() {
                 }} />
               </div>
 
-              <div className="relative z-10">
-                <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-6 leading-[1.1]">
+              <div className="relative z-10 text-center sm:text-left">
+                <h2 className="font-serif text-2xl sm:text-3xl font-black text-white mb-2 leading-[1.1]">
                   {t('common.needPersonalizedRecommendations', 'Need personalized')} <span className="text-brand-pms-129 italic">{t('common.recommendations', 'recommendations?')}</span>
                 </h2>
-                <p className="text-lg text-white/70 mb-8 max-w-xl mx-auto font-light">
-                  {t('common.personalizedRecommendationsDescription', 'Take our quick survey and get a customized roadmap based on your specific needs and goals.')}
+                <p className="text-sm text-white/70 font-light">
+                  {t('common.personalizedRecommendationsDescription', 'Take our quick screening to get a customized checklist with resources specifically chosen for your needs.')}
                 </p>
-                <Link
-                  to="/screening"
-                  className="group inline-flex items-center gap-3 bg-brand-pms-129 text-brand-reflex-blue px-10 py-5 rounded-sm text-[11px] font-black uppercase tracking-[0.2em] hover:shadow-[0_0_40px_rgba(244,179,61,0.5)] transition-all duration-500 hover:scale-105"
-                >
-                  <span>{t('common.getYourPersonalRoadmap', 'Get Your Personal Roadmap')}</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                </Link>
               </div>
+              <Link
+                to="/screening"
+                className="relative z-10 flex-shrink-0 group inline-flex items-center gap-2 bg-brand-pms-129 text-brand-reflex-blue px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.15em] hover:shadow-[0_0_30px_rgba(244,179,61,0.5)] transition-all duration-300 hover:scale-105"
+              >
+                <span>{t('common.getYourPersonalRoadmap', 'Get Your Personal Roadmap')}</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              </Link>
             </motion.div>
           </div>
         </section>

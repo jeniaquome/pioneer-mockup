@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BrandPagination } from '@/components/BrandPagination'
-import { ArrowLeft, Plus, Target, Compass, Users, GraduationCap, Globe, Briefcase, Palette } from 'lucide-react'
+import { ArrowRight, Target, Compass, Users, GraduationCap, Globe, Briefcase, Palette, Sparkles, Heart, Scale, BookOpen, Utensils, Home, Bus, Map } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { getCategoryById, getSubcategoryById, getCanonicalCategoryLabel, type Subcategory } from '@/lib/taxonomy'
 import { generateSectionId } from '@/lib/geo-utils'
 import { API_BASE_URL } from '@/lib/api'
@@ -15,8 +15,8 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import { GlobalResourceSearch } from '@/components/GlobalResourceSearch'
 
 // Helper function to get the icon component with color
-const getIconComponent = (iconName: string, color: string) => {
-  const iconProps = { className: 'w-12 h-12', style: { color, strokeWidth: 2.5 } }
+const getIconComponent = (iconName: string, size: string = 'w-8 h-8') => {
+  const iconProps = { className: size }
   switch (iconName) {
     case 'compass': return <Compass {...iconProps} />
     case 'users': return <Users {...iconProps} />
@@ -24,7 +24,56 @@ const getIconComponent = (iconName: string, color: string) => {
     case 'globe': return <Globe {...iconProps} />
     case 'briefcase': return <Briefcase {...iconProps} />
     case 'palette': return <Palette {...iconProps} />
+    case 'heart': return <Heart {...iconProps} />
+    case 'scale': return <Scale {...iconProps} />
+    case 'book-open': return <BookOpen {...iconProps} />
+    case 'utensils': return <Utensils {...iconProps} />
+    case 'home': return <Home {...iconProps} />
+    case 'bus': return <Bus {...iconProps} />
+    case 'map': return <Map {...iconProps} />
     default: return <Compass {...iconProps} />
+  }
+}
+
+// Get gradient colors for each category/subcategory
+const getCategoryGradient = (id: string) => {
+  switch (id) {
+    case 'living-essentials': return 'from-amber-500/10 to-yellow-500/5'
+    case 'community-belonging': return 'from-blue-500/10 to-indigo-500/5'
+    case 'education-youth': return 'from-green-500/10 to-emerald-500/5'
+    case 'esl-immigrant': return 'from-lime-500/10 to-green-500/5'
+    case 'work-business': return 'from-purple-500/10 to-violet-500/5'
+    case 'culture-leisure': return 'from-red-500/10 to-orange-500/5'
+    // Subcategory-specific gradients
+    case 'social-connection': return 'from-pink-500/10 to-rose-500/5'
+    case 'civic-engagement': return 'from-blue-500/10 to-cyan-500/5'
+    case 'religion': return 'from-purple-500/10 to-indigo-500/5'
+    case 'esl-support': return 'from-green-500/10 to-teal-500/5'
+    case 'refugee-immigrant-support': return 'from-amber-500/10 to-orange-500/5'
+    case 'legal': return 'from-slate-500/10 to-gray-500/5'
+    case 'housing': return 'from-emerald-500/10 to-green-500/5'
+    case 'health': return 'from-red-500/10 to-pink-500/5'
+    case 'food': return 'from-orange-500/10 to-amber-500/5'
+    case 'transportation': return 'from-blue-500/10 to-sky-500/5'
+    default: return 'from-gray-500/10 to-gray-500/5'
+  }
+}
+
+// Get icon for subcategory/group
+const getSubcategoryIcon = (id: string) => {
+  switch (id) {
+    case 'social-connection': return 'users'
+    case 'civic-engagement': return 'scale'
+    case 'religion': return 'heart'
+    case 'esl-support': return 'book-open'
+    case 'refugee-immigrant-support': return 'globe'
+    case 'legal': return 'scale'
+    case 'housing': return 'home'
+    case 'health': return 'heart'
+    case 'food': return 'utensils'
+    case 'transportation': return 'bus'
+    case 'pittsburgh-guides': return 'map'
+    default: return 'compass'
   }
 }
 
@@ -473,73 +522,99 @@ export function ResourceCategoryPage() {
     
     return (
       <>
-        <SEO 
+        <SEO
           title={displayTitle}
           description={displayDescription.length > 160 ? displayDescription.substring(0, 157) + '...' : displayDescription}
           keywords={`Pittsburgh, ${category.label}${routeGroupLabel ? ', ' + routeGroupLabel : ''}, resources, newcomers, immigrants`}
-          url={routeGroupLabel 
+          url={routeGroupLabel
             ? `https://www.pittsburghpioneer.com/resources/${categoryId}/${normalizeGroupKey(routeGroupLabel)}`
             : `https://www.pittsburghpioneer.com/resources/${categoryId}`
           }
         />
         <StructuredData data={breadcrumbSchema} />
-        <main className="min-h-screen bg-white">
-          <article className="container max-w-6xl mx-auto py-12 px-4">
-          <header className="mb-12">
-            <Breadcrumb 
-              items={[
-                { 
-                  label: t('nav.resources', 'Resources'), 
-                  path: '/resources',
-                  translationKey: 'nav.resources'
-                },
-                ...(routeGroupLabel ? [
-                  { 
-                    label: category.label, 
-                    path: `/resources/${categoryId}`,
-                    translationKey: `resources.taxonomy.categories.${category.id}`
-                  },
-                  { 
-                    label: routeGroupLabel,
-                    translationKey: `resources.taxonomy.groups.${normalizeGroupKey(routeGroupLabel)}`
-                  }
-                ] : [
-                  { 
-                    label: category.label,
-                    translationKey: `resources.taxonomy.categories.${category.id}`
-                  }
-                ])
-              ]}
-              className="mb-6"
-            />
-            <div className="flex items-center gap-6 mb-6">
-              <div>
-                {getIconComponent(category.icon, getIconColor(category.id))}
+        <main className="min-h-screen bg-white pt-24">
+          {/* Hero Header */}
+          <section className="bg-brand-reflex-blue py-10 sm:py-12 relative overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-5">
+              <div className="absolute inset-0" style={{
+                backgroundImage: `radial-gradient(circle at 25% 25%, #F4B33D 1px, transparent 1px),
+                                 radial-gradient(circle at 75% 75%, #F4B33D 1px, transparent 1px)`,
+                backgroundSize: '60px 60px'
+              }} />
+            </div>
+
+            <div className="container max-w-6xl mx-auto px-6 relative z-10">
+              {/* Breadcrumb */}
+              <div className="mb-4">
+                <Breadcrumb
+                  items={[
+                    {
+                      label: t('nav.resources', 'Resources'),
+                      path: '/resources',
+                      translationKey: 'nav.resources'
+                    },
+                    ...(routeGroupLabel ? [
+                      {
+                        label: category.label,
+                        path: `/resources/${categoryId}`,
+                        translationKey: `resources.taxonomy.categories.${category.id}`
+                      },
+                      {
+                        label: routeGroupLabel,
+                        translationKey: `resources.taxonomy.groups.${normalizeGroupKey(routeGroupLabel)}`
+                      }
+                    ] : [
+                      {
+                        label: category.label,
+                        translationKey: `resources.taxonomy.categories.${category.id}`
+                      }
+                    ])
+                  ]}
+                  className="text-white/60 [&_a]:text-white/60 [&_a:hover]:text-brand-pms-129"
+                />
               </div>
-              <div>
-                <h1 className="brand-heading-primary text-brand-reflex-blue mb-4" id={generateSectionId(category.label)}>
-                  {t('resources.welcomeToCategory', { category: routeGroupLabel ? t(`resources.taxonomy.groups.${normalizeGroupKey(routeGroupLabel)}`, { defaultValue: routeGroupLabel }) : t(`resources.taxonomy.categories.${category.id}`, { defaultValue: category.label }) })}
+
+              <motion.header
+                className="text-center mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-3 leading-[1.1]" id={generateSectionId(category.label)}>
+                  {routeGroupLabel
+                    ? <>{t(`resources.taxonomy.groups.${normalizeGroupKey(routeGroupLabel)}`, { defaultValue: routeGroupLabel })} <span className="text-brand-pms-129 italic">Resources</span></>
+                    : <>{t(`resources.taxonomy.categories.${category.id}`, { defaultValue: category.label })} <span className="text-brand-pms-129 italic">Resources</span></>
+                  }
                 </h1>
                 {!routeGroupLabel && (
-                  <p className="text-xl text-brand-pms-285 font-medium brand-accent">
+                  <p className="text-base text-white/70 max-w-2xl mx-auto font-light leading-relaxed">
                     {t(`resources.taxonomy.categoryDescriptions.${category.id}`, { defaultValue: category.description })}
                   </p>
                 )}
-              </div>
-            </div>
-          </header>
+              </motion.header>
 
-          {/* Global Search Bar */}
-          <div className="mb-8">
-            <GlobalResourceSearch />
-          </div>
+              {/* Search Bar */}
+              <motion.div
+                className="max-w-xl mx-auto"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+              >
+                <GlobalResourceSearch />
+              </motion.div>
+            </div>
+          </section>
+
+          {/* Content Section */}
+          <article className="container max-w-6xl mx-auto py-12 px-6">
 
           <div className="mb-8">
             {/* Resource Cards Grid with optional tertiary grouping */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-[320px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {isGroupableCategory ? (
                 selectedGroup ? (
-                  (groupMap[selectedGroup] || []).map((sub) => {
+                  (groupMap[selectedGroup] || []).map((sub, idx) => {
                     const groupSlug = normalizeGroupKey(selectedGroup)
                     const buildSubSlug = (sId: string) => {
                       if (categoryId === 'community-belonging' && groupSlug === 'civic-engagement') {
@@ -554,25 +629,35 @@ export function ResourceCategoryPage() {
                     }
                     const subSlug = buildSubSlug(sub.id)
                     return (
-                      <Card key={sub.id} className="group interactive-element hover:shadow-2xl transition-all duration-300 border-2 border-brand-pms-285/20 shadow-lg hover:scale-105 hover:border-brand-pms-285 bg-white rounded-2xl overflow-hidden flex flex-col h-full" onClick={() => navigate(`/resources/${categoryId}/${groupSlug}/${subSlug}`)} style={{ minHeight: '320px' }}>
-                      <CardHeader className="pb-4 bg-gradient-to-br from-brand-pms-290/30 to-white relative p-6">
-                        <div className="flex items-center justify-between">
-                          <div className="w-14 h-14 bg-brand-reflex-blue rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            <Plus className="w-7 h-7 text-white" />
+                      <motion.div
+                        key={sub.id}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: idx * 0.1 }}
+                        viewport={{ once: true }}
+                      >
+                        <button
+                          onClick={() => navigate(`/resources/${categoryId}/${groupSlug}/${subSlug}`)}
+                          className="group w-full h-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                        >
+                          <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient(sub.id)} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                          <div className="relative z-10">
+                            <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                              {getIconComponent(getSubcategoryIcon(sub.id))}
+                            </div>
+                            <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                              {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: getDisplayLabel(sub) })}
+                            </h3>
+                            <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                              <span>{t('common.explore', 'Explore')}</span>
+                              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                            </span>
                           </div>
-                          <div className="w-9 h-9 bg-brand-pms-285/20 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="p-7 pt-3 flex-1 flex flex-col">
-                        <CardTitle className="brand-subheading text-brand-reflex-blue mb-4 group-hover:text-brand-pms-285 transition-colors duration-300 text-2xl font-extrabold">
-                          {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: getDisplayLabel(sub) })}
-                        </CardTitle>
-                        <div className="flex items-center text-brand-reflex-blue text-base font-semibold group-hover:text-brand-pms-285 transition-colors duration-300 brand-accent mt-auto">
-                          <span>{t('common.exploreResources')}</span>
-                          <ArrowLeft className="w-5 h-5 ml-2 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
-                        </div>
-                      </CardContent>
-                    </Card>
+                          <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-brand-reflex-blue/5 flex items-center justify-center text-brand-reflex-blue/20 font-black text-lg group-hover:bg-brand-pms-129/10 group-hover:text-brand-pms-129/40 transition-all duration-500">
+                            {idx + 1}
+                          </div>
+                        </button>
+                      </motion.div>
                     )
                   })
                 ) : (
@@ -582,148 +667,208 @@ export function ResourceCategoryPage() {
                       <>
                         {/* Social Connection subcategory first */}
                         {ungroupedSubcategories.filter(s => s.id === 'social-connection').map((sub) => (
-                          <Card key={sub.id} className="group interactive-element hover:shadow-2xl transition-all duration-300 border-2 border-brand-pms-285/20 shadow-lg hover:scale-105 hover:border-brand-pms-285 bg-white rounded-2xl overflow-hidden flex flex-col h-full" onClick={() => navigate(`/resources/${categoryId}/${sub.id}`)} style={{ minHeight: '320px' }}>
-                            <CardHeader className="pb-4 bg-gradient-to-br from-brand-pms-290/30 to-white relative p-6">
-                              <div className="flex items-center justify-between">
-                                <div className="w-14 h-14 bg-brand-reflex-blue rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                  <Plus className="w-7 h-7 text-white" />
+                          <motion.div
+                            key={sub.id}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0 }}
+                            viewport={{ once: true }}
+                          >
+                            <button
+                              onClick={() => navigate(`/resources/${categoryId}/${sub.id}`)}
+                              className="group w-full h-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                            >
+                              <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient(sub.id)} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                              <div className="relative z-10">
+                                <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                                  {getIconComponent(getSubcategoryIcon(sub.id))}
                                 </div>
-                                <div className="w-9 h-9 bg-brand-pms-285/20 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                                  {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: getDisplayLabel(sub) })}
+                                </h3>
+                                <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                                  <span>{t('common.explore', 'Explore')}</span>
+                                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                </span>
                               </div>
-                            </CardHeader>
-                            <CardContent className="p-7 pt-3 flex-1 flex flex-col">
-                              <CardTitle className="brand-subheading text-brand-reflex-blue mb-4 group-hover:text-brand-pms-285 transition-colors duration-300 text-2xl font-extrabold">
-                                {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: getDisplayLabel(sub) })}
-                              </CardTitle>
-                              <div className="flex items-center text-brand-reflex-blue text-base font-semibold group-hover:text-brand-pms-285 transition-colors duration-300 brand-accent mt-auto">
-                                <span>{t('common.exploreResources')}</span>
-                                <ArrowLeft className="w-5 h-5 ml-2 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
+                              <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-brand-reflex-blue/5 flex items-center justify-center text-brand-reflex-blue/20 font-black text-lg group-hover:bg-brand-pms-129/10 group-hover:text-brand-pms-129/40 transition-all duration-500">
+                                1
                               </div>
-                            </CardContent>
-                          </Card>
+                            </button>
+                          </motion.div>
                         ))}
 
                         {/* Civic Engagement group second */}
                         {Object.keys(groupMap).filter(g => normalizeGroupKey(g) === 'civic-engagement').map((group) => (
-                          <Card key={group} className="group interactive-element hover:shadow-2xl transition-all duration-300 border-2 border-brand-pms-285/20 shadow-lg hover:scale-105 hover:border-brand-pms-285 bg-white rounded-2xl overflow-hidden flex flex-col h-full" onClick={() => {
-                            const groupSlug = normalizeGroupKey(group)
-                            navigate(`/resources/${categoryId}/${groupSlug}`)
-                          }} style={{ minHeight: '320px' }}>
-                            <CardHeader className="pb-4 bg-gradient-to-br from-brand-pms-290/30 to-white relative p-6">
-                              <div className="flex items-center justify-between">
-                                <div className="w-14 h-14 bg-brand-reflex-blue rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                  <Plus className="w-7 h-7 text-white" />
+                          <motion.div
+                            key={group}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                            viewport={{ once: true }}
+                          >
+                            <button
+                              onClick={() => {
+                                const groupSlug = normalizeGroupKey(group)
+                                navigate(`/resources/${categoryId}/${groupSlug}`)
+                              }}
+                              className="group w-full h-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                            >
+                              <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient('civic-engagement')} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                              <div className="relative z-10">
+                                <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                                  {getIconComponent(getSubcategoryIcon('civic-engagement'))}
                                 </div>
-                                <div className="w-9 h-9 bg-brand-pms-285/20 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                                  {t(`resources.taxonomy.groups.${normalizeGroupKey(group)}`, { defaultValue: group })}
+                                </h3>
+                                <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                                  <span>{t('common.explore', 'Explore')}</span>
+                                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                </span>
                               </div>
-                            </CardHeader>
-                            <CardContent className="p-7 pt-3 flex-1 flex flex-col">
-                              <CardTitle className="brand-subheading text-brand-reflex-blue mb-4 group-hover:text-brand-pms-285 transition-colors duration-300 text-2xl font-extrabold">
-                                {t(`resources.taxonomy.groups.${normalizeGroupKey(group)}`, { defaultValue: group })}
-                              </CardTitle>
-                              <div className="flex items-center text-brand-reflex-blue text-base font-semibold group-hover:text-brand-pms-285 transition-colors duration-300 brand-accent mt-auto">
-                                <span>{t('common.exploreResources')}</span>
-                                <ArrowLeft className="w-5 h-5 ml-2 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
+                              <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-brand-reflex-blue/5 flex items-center justify-center text-brand-reflex-blue/20 font-black text-lg group-hover:bg-brand-pms-129/10 group-hover:text-brand-pms-129/40 transition-all duration-500">
+                                2
                               </div>
-                            </CardContent>
-                          </Card>
+                            </button>
+                          </motion.div>
                         ))}
 
                         {/* Religion third */}
                         {ungroupedSubcategories.filter(s => s.id === 'religion').map((sub) => (
-                          <Card key={sub.id} className="group interactive-element hover:shadow-2xl transition-all duration-300 border-2 border-brand-pms-285/20 shadow-lg hover:scale-105 hover:border-brand-pms-285 bg-white rounded-2xl overflow-hidden flex flex-col h-full" onClick={() => navigate(`/resources/${categoryId}/${sub.id}`)} style={{ minHeight: '320px' }}>
-                            <CardHeader className="pb-4 bg-gradient-to-br from-brand-pms-290/30 to-white relative p-6">
-                              <div className="flex items-center justify-between">
-                                <div className="w-14 h-14 bg-brand-reflex-blue rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                  <Plus className="w-7 h-7 text-white" />
+                          <motion.div
+                            key={sub.id}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            viewport={{ once: true }}
+                          >
+                            <button
+                              onClick={() => navigate(`/resources/${categoryId}/${sub.id}`)}
+                              className="group w-full h-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                            >
+                              <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient(sub.id)} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                              <div className="relative z-10">
+                                <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                                  {getIconComponent(getSubcategoryIcon(sub.id))}
                                 </div>
-                                <div className="w-9 h-9 bg-brand-pms-285/20 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                                  {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: getDisplayLabel(sub) })}
+                                </h3>
+                                <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                                  <span>{t('common.explore', 'Explore')}</span>
+                                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                </span>
                               </div>
-                            </CardHeader>
-                            <CardContent className="p-7 pt-3 flex-1 flex flex-col">
-                              <CardTitle className="brand-subheading text-brand-reflex-blue mb-4 group-hover:text-brand-pms-285 transition-colors duration-300 text-2xl font-extrabold">
-                                {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: getDisplayLabel(sub) })}
-                              </CardTitle>
-                              <div className="flex items-center text-brand-reflex-blue text-base font-semibold group-hover:text-brand-pms-285 transition-colors duration-300 brand-accent mt-auto">
-                                <span>{t('common.exploreResources')}</span>
-                                <ArrowLeft className="w-5 h-5 ml-2 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
+                              <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-brand-reflex-blue/5 flex items-center justify-center text-brand-reflex-blue/20 font-black text-lg group-hover:bg-brand-pms-129/10 group-hover:text-brand-pms-129/40 transition-all duration-500">
+                                3
                               </div>
-                            </CardContent>
-                          </Card>
+                            </button>
+                          </motion.div>
                         ))}
                       </>
                     ) : category.id === 'esl-immigrant' ? (
                       <>
                         {/* ESL and Immigrant Support custom ordering: ESL Support, Refugee/Immigrant Support, Legal */}
                         {ungroupedSubcategories.filter(s => s.id === 'esl-support').map((sub) => (
-                          <Card key={sub.id} className="group interactive-element hover:shadow-2xl transition-all duration-300 border-2 border-brand-pms-285/20 shadow-lg hover:scale-105 hover:border-brand-pms-285 bg-white rounded-2xl overflow-hidden flex flex-col h-full" onClick={() => navigate(`/resources/${categoryId}/${sub.id}`)} style={{ minHeight: '320px' }}>
-                            <CardHeader className="pb-4 bg-gradient-to-br from-brand-pms-290/30 to-white relative p-6">
-                              <div className="flex items-center justify-between">
-                                <div className="w-14 h-14 bg-brand-reflex-blue rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                  <Plus className="w-7 h-7 text-white" />
+                          <motion.div
+                            key={sub.id}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0 }}
+                            viewport={{ once: true }}
+                          >
+                            <button
+                              onClick={() => navigate(`/resources/${categoryId}/${sub.id}`)}
+                              className="group w-full h-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                            >
+                              <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient(sub.id)} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                              <div className="relative z-10">
+                                <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                                  {getIconComponent(getSubcategoryIcon(sub.id))}
                                 </div>
-                                <div className="w-9 h-9 bg-brand-pms-285/20 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                                  {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: getDisplayLabel(sub) })}
+                                </h3>
+                                <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                                  <span>{t('common.explore', 'Explore')}</span>
+                                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                </span>
                               </div>
-                            </CardHeader>
-                            <CardContent className="p-7 pt-3 flex-1 flex flex-col">
-                              <CardTitle className="brand-subheading text-brand-reflex-blue mb-4 group-hover:text-brand-pms-285 transition-colors duration-300 text-2xl font-extrabold">
-                                {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: getDisplayLabel(sub) })}
-                              </CardTitle>
-                              <div className="flex items-center text-brand-reflex-blue text-base font-semibold group-hover:text-brand-pms-285 transition-colors duration-300 brand-accent mt-auto">
-                                <span>{t('common.exploreResources')}</span>
-                                <ArrowLeft className="w-5 h-5 ml-2 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
+                              <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-brand-reflex-blue/5 flex items-center justify-center text-brand-reflex-blue/20 font-black text-lg group-hover:bg-brand-pms-129/10 group-hover:text-brand-pms-129/40 transition-all duration-500">
+                                1
                               </div>
-                            </CardContent>
-                          </Card>
+                            </button>
+                          </motion.div>
                         ))}
 
                         {/* Refugee/Immigrant Support second */}
                         {ungroupedSubcategories.filter(s => s.id === 'refugee-immigrant-support').map((sub) => (
-                          <Card key={sub.id} className="group interactive-element hover:shadow-2xl transition-all duration-300 border-2 border-brand-pms-285/20 shadow-lg hover:scale-105 hover:border-brand-pms-285 bg-white rounded-2xl overflow-hidden flex flex-col h-full" onClick={() => navigate(`/resources/${categoryId}/${sub.id}`)} style={{ minHeight: '320px' }}>
-                            <CardHeader className="pb-4 bg-gradient-to-br from-brand-pms-290/30 to-white relative p-6">
-                              <div className="flex items-center justify-between">
-                                <div className="w-14 h-14 bg-brand-reflex-blue rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                  <Plus className="w-7 h-7 text-white" />
+                          <motion.div
+                            key={sub.id}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                            viewport={{ once: true }}
+                          >
+                            <button
+                              onClick={() => navigate(`/resources/${categoryId}/${sub.id}`)}
+                              className="group w-full h-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                            >
+                              <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient(sub.id)} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                              <div className="relative z-10">
+                                <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                                  {getIconComponent(getSubcategoryIcon(sub.id))}
                                 </div>
-                                <div className="w-9 h-9 bg-brand-pms-285/20 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                                  {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: getDisplayLabel(sub) })}
+                                </h3>
+                                <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                                  <span>{t('common.explore', 'Explore')}</span>
+                                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                </span>
                               </div>
-                            </CardHeader>
-                            <CardContent className="p-7 pt-3 flex-1 flex flex-col">
-                              <CardTitle className="brand-subheading text-brand-reflex-blue mb-4 group-hover:text-brand-pms-285 transition-colors duration-300 text-2xl font-extrabold">
-                                {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: getDisplayLabel(sub) })}
-                              </CardTitle>
-                              <div className="flex items-center text-brand-reflex-blue text-base font-semibold group-hover:text-brand-pms-285 transition-colors duration-300 brand-accent mt-auto">
-                                <span>{t('common.exploreResources')}</span>
-                                <ArrowLeft className="w-5 h-5 ml-2 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
+                              <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-brand-reflex-blue/5 flex items-center justify-center text-brand-reflex-blue/20 font-black text-lg group-hover:bg-brand-pms-129/10 group-hover:text-brand-pms-129/40 transition-all duration-500">
+                                2
                               </div>
-                            </CardContent>
-                          </Card>
+                            </button>
+                          </motion.div>
                         ))}
 
                         {/* Legal group third */}
                         {Object.keys(groupMap).filter(g => normalizeGroupKey(g) === 'legal').map((group) => (
-                          <Card key={group} className="group interactive-element hover:shadow-2xl transition-all duration-300 border-2 border-brand-pms-285/20 shadow-lg hover:scale-105 hover:border-brand-pms-285 bg-white rounded-2xl overflow-hidden flex flex-col h-full" onClick={() => {
-                            const groupSlug = normalizeGroupKey(group)
-                            navigate(`/resources/${categoryId}/${groupSlug}`)
-                          }} style={{ minHeight: '320px' }}>
-                            <CardHeader className="pb-4 bg-gradient-to-br from-brand-pms-290/30 to-white relative p-6">
-                              <div className="flex items-center justify-between">
-                                <div className="w-14 h-14 bg-brand-reflex-blue rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                  <Plus className="w-7 h-7 text-white" />
+                          <motion.div
+                            key={group}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            viewport={{ once: true }}
+                          >
+                            <button
+                              onClick={() => {
+                                const groupSlug = normalizeGroupKey(group)
+                                navigate(`/resources/${categoryId}/${groupSlug}`)
+                              }}
+                              className="group w-full h-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                            >
+                              <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient('legal')} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                              <div className="relative z-10">
+                                <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                                  {getIconComponent(getSubcategoryIcon('legal'))}
                                 </div>
-                                <div className="w-9 h-9 bg-brand-pms-285/20 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                                  {t(`resources.taxonomy.groups.${normalizeGroupKey(group)}`, { defaultValue: group })}
+                                </h3>
+                                <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                                  <span>{t('common.explore', 'Explore')}</span>
+                                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                </span>
                               </div>
-                            </CardHeader>
-                            <CardContent className="p-7 pt-3 flex-1 flex flex-col">
-                              <CardTitle className="brand-subheading text-brand-reflex-blue mb-4 group-hover:text-brand-pms-285 transition-colors duration-300 text-2xl font-extrabold">
-                                {t(`resources.taxonomy.groups.${normalizeGroupKey(group)}`, { defaultValue: group })}
-                              </CardTitle>
-                              <div className="flex items-center text-brand-reflex-blue text-base font-semibold group-hover:text-brand-pms-285 transition-colors duration-300 brand-accent mt-auto">
-                                <span>{t('common.exploreResources')}</span>
-                                <ArrowLeft className="w-5 h-5 ml-2 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
+                              <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-brand-reflex-blue/5 flex items-center justify-center text-brand-reflex-blue/20 font-black text-lg group-hover:bg-brand-pms-129/10 group-hover:text-brand-pms-129/40 transition-all duration-500">
+                                3
                               </div>
-                            </CardContent>
-                          </Card>
+                            </button>
+                          </motion.div>
                         ))}
                       </>
                     ) : (
@@ -731,139 +876,180 @@ export function ResourceCategoryPage() {
                     (category.id === 'living-essentials'
                       ? Object.keys(groupMap).filter(g => g !== 'Pittsburgh Guides' && g !== 'Food')
                       : Object.keys(groupMap)
-                    ).map((group) => (
-                      <Card key={group} className="group interactive-element hover:shadow-2xl transition-all duration-300 border-2 border-brand-pms-285/20 shadow-lg hover:scale-105 hover:border-brand-pms-285 bg-white rounded-2xl overflow-hidden flex flex-col h-full" onClick={() => {
-                        const groupSlug = normalizeGroupKey(group)
-                        navigate(`/resources/${categoryId}/${groupSlug}`)
-                      }} style={{ minHeight: '320px' }}>
-                        <CardHeader className="pb-4 bg-gradient-to-br from-brand-pms-290/30 to-white relative p-6">
-                          <div className="flex items-center justify-between">
-                            <div className="w-14 h-14 bg-brand-reflex-blue rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                              <Plus className="w-7 h-7 text-white" />
+                    ).map((group, idx) => (
+                      <motion.div
+                        key={group}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: idx * 0.1 }}
+                        viewport={{ once: true }}
+                      >
+                        <button
+                          onClick={() => {
+                            const groupSlug = normalizeGroupKey(group)
+                            navigate(`/resources/${categoryId}/${groupSlug}`)
+                          }}
+                          className="group w-full h-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                        >
+                          <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient(normalizeGroupKey(group))} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                          <div className="relative z-10">
+                            <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                              {getIconComponent(getSubcategoryIcon(normalizeGroupKey(group)))}
                             </div>
-                            <div className="w-9 h-9 bg-brand-pms-285/20 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                              {t(`resources.taxonomy.groups.${normalizeGroupKey(group)}`, { defaultValue: group })}
+                            </h3>
+                            <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                              <span>{t('common.explore', 'Explore')}</span>
+                              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                            </span>
                           </div>
-                        </CardHeader>
-                        <CardContent className="p-7 pt-3 flex-1 flex flex-col">
-                          <CardTitle className="brand-subheading text-brand-reflex-blue mb-4 group-hover:text-brand-pms-285 transition-colors duration-300 text-2xl font-extrabold">
-                            {t(`resources.taxonomy.groups.${normalizeGroupKey(group)}`, { defaultValue: group })}
-                          </CardTitle>
-                          <div className="flex items-center text-brand-reflex-blue text-base font-semibold group-hover:text-brand-pms-285 transition-colors duration-300 brand-accent mt-auto">
-                            <span>{t('common.exploreResources')}</span>
-                            <ArrowLeft className="w-5 h-5 ml-2 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
+                          <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-brand-reflex-blue/5 flex items-center justify-center text-brand-reflex-blue/20 font-black text-lg group-hover:bg-brand-pms-129/10 group-hover:text-brand-pms-129/40 transition-all duration-500">
+                            {idx + 1}
                           </div>
-                        </CardContent>
-                      </Card>
+                        </button>
+                      </motion.div>
                     )))}
-                                         {/* Place Transit immediately after Housing and Health - excluding those already shown for community-belonging */}
-                     {ungroupedSubcategories.filter(sub => {
-                       if (category.id === 'community-belonging') {
-                         return sub.id !== 'social-connection' && sub.id !== 'religion'
-                       }
-                       if (category.id === 'esl-immigrant') {
-                         return sub.id !== 'refugee-immigrant-support' && sub.id !== 'esl-support'
-                       }
-                       return true
-                     }).map((sub) => (
-                       <Card key={sub.id} className="group interactive-element hover:shadow-2xl transition-all duration-300 border-2 border-brand-pms-285/20 shadow-lg hover:scale-105 hover:border-brand-pms-285 bg-white rounded-2xl overflow-hidden flex flex-col h-full" onClick={() => navigate(`/resources/${categoryId}/${sub.id}`)} style={{ minHeight: '320px' }}>
-                        <CardHeader className="pb-4 bg-gradient-to-br from-brand-pms-290/30 to-white relative p-6">
-                          <div className="flex items-center justify-between">
-                            <div className="w-14 h-14 bg-brand-reflex-blue rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                              <Plus className="w-7 h-7 text-white" />
+                    {/* Place Transit immediately after Housing and Health - excluding those already shown for community-belonging */}
+                    {ungroupedSubcategories.filter(sub => {
+                      if (category.id === 'community-belonging') {
+                        return sub.id !== 'social-connection' && sub.id !== 'religion'
+                      }
+                      if (category.id === 'esl-immigrant') {
+                        return sub.id !== 'refugee-immigrant-support' && sub.id !== 'esl-support'
+                      }
+                      return true
+                    }).map((sub, idx) => (
+                      <motion.div
+                        key={sub.id}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: idx * 0.1 }}
+                        viewport={{ once: true }}
+                      >
+                        <button
+                          onClick={() => navigate(`/resources/${categoryId}/${sub.id}`)}
+                          className="group w-full h-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                        >
+                          <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient(sub.id)} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                          <div className="relative z-10">
+                            <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                              {getIconComponent(getSubcategoryIcon(sub.id))}
                             </div>
-                            <div className="w-9 h-9 bg-brand-pms-285/20 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                              {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: getDisplayLabel(sub) })}
+                            </h3>
+                            <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                              <span>{t('common.explore', 'Explore')}</span>
+                              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                            </span>
                           </div>
-                        </CardHeader>
-                        <CardContent className="p-7 pt-3 flex-1 flex flex-col">
-                          <CardTitle className="brand-subheading text-brand-reflex-blue mb-4 group-hover:text-brand-pms-285 transition-colors duration-300 text-2xl font-extrabold">
-                             {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: getDisplayLabel(sub) })}
-                          </CardTitle>
-                          <div className="flex items-center text-brand-reflex-blue text-base font-semibold group-hover:text-brand-pms-285 transition-colors duration-300 brand-accent mt-auto">
-                            <span>{t('common.exploreResources')}</span>
-                            <ArrowLeft className="w-5 h-5 ml-2 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
-                          </div>
-                        </CardContent>
-                      </Card>
+                        </button>
+                      </motion.div>
                     ))}
                     {/* Render Food after Transit when in Living Essentials */}
                     {category.id === 'living-essentials' && Object.keys(groupMap).filter(g => g === 'Food').map((group) => (
-                      <Card key={group} className="group interactive-element hover:shadow-2xl transition-all duration-300 border-2 border-brand-pms-285/20 shadow-lg hover:scale-105 hover:border-brand-pms-285 bg-white rounded-2xl overflow-hidden flex flex-col h-full" onClick={() => {
-                        const groupSlug = normalizeGroupKey(group)
-                        navigate(`/resources/${categoryId}/${groupSlug}`)
-                      }} style={{ minHeight: '320px' }}>
-                        <CardHeader className="pb-4 bg-gradient-to-br from-brand-pms-290/30 to-white relative p-6">
-                          <div className="flex items-center justify-between">
-                            <div className="w-14 h-14 bg-brand-reflex-blue rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                              <Plus className="w-7 h-7 text-white" />
+                      <motion.div
+                        key={group}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                        viewport={{ once: true }}
+                      >
+                        <button
+                          onClick={() => {
+                            const groupSlug = normalizeGroupKey(group)
+                            navigate(`/resources/${categoryId}/${groupSlug}`)
+                          }}
+                          className="group w-full h-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                        >
+                          <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient('food')} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                          <div className="relative z-10">
+                            <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                              {getIconComponent(getSubcategoryIcon('food'))}
                             </div>
-                            <div className="w-9 h-9 bg-brand-pms-285/20 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                              {t(`resources.taxonomy.groups.${normalizeGroupKey(group)}`, { defaultValue: group })}
+                            </h3>
+                            <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                              <span>{t('common.explore', 'Explore')}</span>
+                              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                            </span>
                           </div>
-                        </CardHeader>
-                        <CardContent className="p-7 pt-3 flex-1 flex flex-col">
-                          <CardTitle className="brand-subheading text-brand-reflex-blue mb-4 group-hover:text-brand-pms-285 transition-colors duration-300 text-2xl font-extrabold">
-                            {t(`resources.taxonomy.groups.${normalizeGroupKey(group)}`, { defaultValue: group })}
-                          </CardTitle>
-                          <div className="flex items-center text-brand-reflex-blue text-base font-semibold group-hover:text-brand-pms-285 transition-colors duration-300 brand-accent mt-auto">
-                            <span>{t('common.exploreResources')}</span>
-                            <ArrowLeft className="w-5 h-5 ml-2 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
-                          </div>
-                        </CardContent>
-                      </Card>
+                        </button>
+                      </motion.div>
                     ))}
                     {/* For Living Essentials, append Pittsburgh Guides at the end after Transit */}
                     {category.id === 'living-essentials' && Object.keys(groupMap).filter(g => g === 'Pittsburgh Guides').map((group) => (
-                      <Card key={group} className="group interactive-element hover:shadow-2xl transition-all duration-300 border-2 border-brand-pms-285/20 shadow-lg hover:scale-105 hover:border-brand-pms-285 bg-white rounded-2xl overflow-hidden flex flex-col h-full" onClick={() => {
-                        const groupSlug = normalizeGroupKey(group)
-                        navigate(`/resources/${categoryId}/${groupSlug}`)
-                      }} style={{ minHeight: '320px' }}>
-                        <CardHeader className="pb-4 bg-gradient-to-br from-brand-pms-290/30 to-white relative p-6">
-                          <div className="flex items-center justify-between">
-                            <div className="w-14 h-14 bg-brand-reflex-blue rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                              <Plus className="w-7 h-7 text-white" />
+                      <motion.div
+                        key={group}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                        viewport={{ once: true }}
+                      >
+                        <button
+                          onClick={() => {
+                            const groupSlug = normalizeGroupKey(group)
+                            navigate(`/resources/${categoryId}/${groupSlug}`)
+                          }}
+                          className="group w-full h-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                        >
+                          <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient('pittsburgh-guides')} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                          <div className="relative z-10">
+                            <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                              {getIconComponent(getSubcategoryIcon('pittsburgh-guides'))}
                             </div>
-                            <div className="w-9 h-9 bg-brand-pms-285/20 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                              {t(`resources.taxonomy.groups.${normalizeGroupKey(group)}`, { defaultValue: group })}
+                            </h3>
+                            <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                              <span>{t('common.explore', 'Explore')}</span>
+                              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                            </span>
                           </div>
-                        </CardHeader>
-                        <CardContent className="p-7 pt-3 flex-1 flex flex-col">
-                          <CardTitle className="brand-subheading text-brand-reflex-blue mb-4 group-hover:text-brand-pms-285 transition-colors duration-300 text-2xl font-extrabold">
-                            {t(`resources.taxonomy.groups.${normalizeGroupKey(group)}`, { defaultValue: group })}
-                          </CardTitle>
-                          <div className="flex items-center text-brand-reflex-blue text-base font-semibold group-hover:text-brand-pms-285 transition-colors duration-300 brand-accent mt-auto">
-                            <span>{t('common.exploreResources')}</span>
-                            <ArrowLeft className="w-5 h-5 ml-2 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
-                          </div>
-                        </CardContent>
-                      </Card>
+                        </button>
+                      </motion.div>
                     ))}
                   </>
                 )
                 ) : (
-                category.subcategories.map((sub) => (
-                  <Card key={sub.id} className="group interactive-element hover:shadow-2xl transition-all duration-300 border-2 border-brand-pms-285/20 shadow-lg hover:scale-105 hover:border-brand-pms-285 bg-white rounded-2xl overflow-hidden flex flex-col h-full" onClick={() => {
-                    if (routeGroupLabel) {
-                      navigate(`/resources/${categoryId}/${normalizeGroupKey(routeGroupLabel)}/${sub.id}`)
-                    } else {
-                      navigate(`/resources/${categoryId}/${sub.id}`)
-                    }
-                  }} style={{ minHeight: '320px' }}>
-                    <CardHeader className="pb-4 bg-gradient-to-br from-brand-pms-290/30 to-white relative p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="w-14 h-14 bg-brand-reflex-blue rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                          <Plus className="w-7 h-7 text-white" />
+                category.subcategories.map((sub, idx) => (
+                  <motion.div
+                    key={sub.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: idx * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    <button
+                      onClick={() => {
+                        if (routeGroupLabel) {
+                          navigate(`/resources/${categoryId}/${normalizeGroupKey(routeGroupLabel)}/${sub.id}`)
+                        } else {
+                          navigate(`/resources/${categoryId}/${sub.id}`)
+                        }
+                      }}
+                      className="group w-full h-full text-left relative bg-white p-8 rounded-2xl hover:shadow-[0_20px_60px_rgba(46,49,146,0.12)] transition-all duration-500 hover:-translate-y-2 border border-brand-reflex-blue/5 overflow-hidden"
+                    >
+                      <div className={`absolute inset-0 bg-gradient-to-br ${getCategoryGradient(sub.id)} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                      <div className="relative z-10">
+                        <div className="w-14 h-14 bg-brand-reflex-blue/10 rounded-xl flex items-center justify-center text-brand-reflex-blue mb-6 group-hover:bg-brand-pms-129 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                          {getIconComponent(getSubcategoryIcon(sub.id))}
                         </div>
-                        <div className="w-9 h-9 bg-brand-pms-285/20 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <h3 className="text-xl sm:text-2xl font-serif font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">
+                          {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: sub.label })}
+                        </h3>
+                        <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                          <span>{t('common.explore', 'Explore')}</span>
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                        </span>
                       </div>
-                    </CardHeader>
-                    <CardContent className="p-7 pt-3 flex-1 flex flex-col">
-                      <CardTitle className="brand-subheading text-brand-reflex-blue mb-4 group-hover:text-brand-pms-285 transition-colors duration-300 text-2xl font-extrabold">
-                         {t(`resources.taxonomy.subcategories.${sub.id}`, { defaultValue: sub.label })}
-                      </CardTitle>
-                      <div className="flex items-center text-brand-reflex-blue text-base font-semibold group-hover:text-brand-pms-285 transition-colors duration-300 brand-accent mt-auto">
-                        <span>{t('common.exploreResources')}</span>
-                        <ArrowLeft className="w-5 h-5 ml-2 rotate-180 group-hover:translate-x-1 transition-transform duration-300" />
+                      <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-brand-reflex-blue/5 flex items-center justify-center text-brand-reflex-blue/20 font-black text-lg group-hover:bg-brand-pms-129/10 group-hover:text-brand-pms-129/40 transition-all duration-500">
+                        {idx + 1}
                       </div>
-                    </CardContent>
-                  </Card>
+                    </button>
+                  </motion.div>
                 ))
               )}
             </div>
@@ -1046,7 +1232,7 @@ export function ResourceCategoryPage() {
 
   return (
     <>
-      <SEO 
+      <SEO
         title={`${subcategory.label} Resources`}
         description={`Find ${subcategory.label.toLowerCase()} resources for newcomers to Pittsburgh. ${subcategory.description || 'Discover organizations, services, and support to help you thrive.'}`}
         keywords={`Pittsburgh, ${category.label}, ${subcategory.label}, resources, newcomers, immigrants`}
@@ -1054,82 +1240,112 @@ export function ResourceCategoryPage() {
       />
       <StructuredData data={subcategoryBreadcrumbSchema} />
       <StructuredData data={collectionPageSchema} />
-      <main className="min-h-screen bg-white">
-        <article className="container max-w-6xl mx-auto py-6 px-4">
-        <header className="mb-6">
-          {/* Breadcrumb Navigation */}
-          <Breadcrumb 
-            items={[
-              ...(fromPriorityCategories ? [
-                { 
-                  label: t('common.dashboard', 'Dashboard'), 
-                  path: '/dashboard',
-                  translationKey: 'common.dashboard'
-                }
-              ] : [
-                { 
-                  label: t('nav.resources', 'Resources'), 
-                  path: '/resources',
-                  translationKey: 'nav.resources'
-                }
-              ]),
-              { 
-                label: category.label, 
-                path: `/resources/${categoryId}`,
-                translationKey: `resources.taxonomy.categories.${category.id}`
-              },
-              ...(() => {
-                const candidate = isGroupableCategory
-                  ? (routeGroupLabel || (subcategory.label.includes('/') ? subcategory.label.split('/')[0].trim() : null))
-                  : null
-                const effectiveGroupLabel = candidate && (routeGroupLabel || (candidate in groupMap ? candidate : null))
-                if (!effectiveGroupLabel) return []
-                const groupSlug = normalizeGroupKey(effectiveGroupLabel)
-                return [{
-                  label: effectiveGroupLabel,
-                  path: `/resources/${categoryId}/${groupSlug}`,
-                  translationKey: `resources.taxonomy.groups.${groupSlug}`
-                }]
-              })(),
-              { 
-                label: subcategory.label,
-                translationKey: `resources.taxonomy.subcategories.${subcategory.id}`
-              }
-            ]}
-            includeHome={!fromPriorityCategories}
-            className="mb-4"
-          />
+      <main className="min-h-screen bg-white pt-24">
+        {/* Hero Header */}
+        <section className="bg-brand-reflex-blue py-12 sm:py-16 relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 25% 25%, #F4B33D 1px, transparent 1px),
+                               radial-gradient(circle at 75% 75%, #F4B33D 1px, transparent 1px)`,
+              backgroundSize: '60px 60px'
+            }} />
+          </div>
 
-          <div className="mb-4">
+          <div className="container max-w-6xl mx-auto px-6 relative z-10">
+            {/* Breadcrumb */}
+            <div className="mb-6">
+              <Breadcrumb
+                items={[
+                  ...(fromPriorityCategories ? [
+                    {
+                      label: t('common.dashboard', 'Dashboard'),
+                      path: '/dashboard',
+                      translationKey: 'common.dashboard'
+                    }
+                  ] : [
+                    {
+                      label: t('nav.resources', 'Resources'),
+                      path: '/resources',
+                      translationKey: 'nav.resources'
+                    }
+                  ]),
+                  {
+                    label: category.label,
+                    path: `/resources/${categoryId}`,
+                    translationKey: `resources.taxonomy.categories.${category.id}`
+                  },
+                  ...(() => {
+                    const candidate = isGroupableCategory
+                      ? (routeGroupLabel || (subcategory.label.includes('/') ? subcategory.label.split('/')[0].trim() : null))
+                      : null
+                    const effectiveGroupLabel = candidate && (routeGroupLabel || (candidate in groupMap ? candidate : null))
+                    if (!effectiveGroupLabel) return []
+                    const groupSlug = normalizeGroupKey(effectiveGroupLabel)
+                    return [{
+                      label: effectiveGroupLabel,
+                      path: `/resources/${categoryId}/${groupSlug}`,
+                      translationKey: `resources.taxonomy.groups.${groupSlug}`
+                    }]
+                  })(),
+                  {
+                    label: subcategory.label,
+                    translationKey: `resources.taxonomy.subcategories.${subcategory.id}`
+                  }
+                ]}
+                includeHome={!fromPriorityCategories}
+                className="text-white/60 [&_a]:text-white/60 [&_a:hover]:text-brand-pms-129"
+              />
+            </div>
+
             {fromPriorityCategories && (
-              <div className="mb-4 p-4 rounded-xl border-2" style={{ 
-                backgroundColor: '#FCE51A20', 
-                borderColor: '#FCE51A' 
-              }}>
+              <motion.div
+                className="mb-6 p-4 rounded-xl bg-brand-pms-129/20 border border-brand-pms-129/30"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
                 <div className="flex items-center gap-3">
-                  <Target className="w-6 h-6" style={{ color: '#2E3192' }} />
+                  <Target className="w-6 h-6 text-brand-pms-129" />
                   <div>
-                    <h3 className="font-bold text-brand-reflex-blue brand-subheading">
+                    <h3 className="font-bold text-white text-sm">
                       {t('resources.fromPriorityCategories', 'From Your Priority Resources')}
                     </h3>
-                    <p className="text-sm text-brand-reflex-blue/80 brand-accent">
+                    <p className="text-xs text-white/70">
                       {t('resources.personalizedResourcesMessage', 'These resources were selected based on your survey responses.')}
                     </p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             )}
-            <h1 className="brand-heading-primary text-brand-reflex-blue mb-4" id={generateSectionId(subcategory.label)}>{t(`resources.taxonomy.subcategories.${subcategory.id}`, { defaultValue: subcategory.label })}</h1>
-          </div>
-          </header>
 
-          {/* Global Search Bar */}
-          <div className="mb-6">
-            <GlobalResourceSearch />
-          </div>
+            <motion.header
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4 leading-[1.1]" id={generateSectionId(subcategory.label)}>
+                {t(`resources.taxonomy.subcategories.${subcategory.id}`, { defaultValue: subcategory.label })} <span className="text-brand-pms-129 italic">Resources</span>
+              </h1>
+            </motion.header>
 
+            {/* Search Bar */}
+            <motion.div
+              className="max-w-2xl mx-auto mt-8"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+            >
+              <GlobalResourceSearch />
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Content Section */}
+        <article className="container max-w-6xl mx-auto py-8 px-6">
           {/* Results Summary */}
-          <div className="text-sm text-brand-reflex-blue/80 brand-accent mb-4">
+          <div className="text-sm text-gray-500 mb-6">
             {t('resources.showingResults', {
               current: total > 0 && paginatedResources.length > 0
                 ? `${(currentPage - 1) * pageSize + 1}–${(currentPage - 1) * pageSize + paginatedResources.length}`

@@ -32,23 +32,23 @@ export function GlobalResourceSearch({ className = '' }: GlobalResourceSearchPro
   }
 
   return (
-    <div className={`flex flex-col sm:flex-row gap-3 ${className}`}>
+    <div className={`flex items-center gap-2 ${className}`}>
       <div className="flex-1 relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-reflex-blue/40 w-5 h-5 pointer-events-none" />
         <Input
           type="text"
           placeholder={t('resources.globalSearch.placeholder', 'Search all resources...')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="pl-10 pr-4 py-2 border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full"
+          className="pl-12 pr-4 py-3 h-12 bg-white border-0 rounded-full shadow-lg focus:ring-2 focus:ring-brand-pms-129/50 text-brand-reflex-blue placeholder:text-brand-reflex-blue/40 w-full"
           aria-label={t('resources.globalSearch.placeholder', 'Search all resources...')}
         />
       </div>
       <Button
         onClick={handleSearch}
         disabled={!searchQuery.trim()}
-        className="bg-brand-reflex-blue hover:bg-brand-pms-285 text-white font-medium px-6 py-2 touch-target whitespace-nowrap"
+        className="h-12 bg-white/10 hover:bg-brand-pms-129 text-white hover:text-brand-reflex-blue font-black px-5 rounded-full border border-white/20 hover:border-brand-pms-129 transition-all duration-300 whitespace-nowrap text-[10px] uppercase tracking-[0.15em]"
       >
         <Search className="w-4 h-4 mr-2" />
         {t('resources.globalSearch.button', 'Search')}

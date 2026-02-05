@@ -155,11 +155,6 @@ export function HomePage() {
               transition={{ duration: 0.8 }}
               className="max-w-4xl"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full mb-8">
-                <Sparkles className="w-4 h-4 text-brand-pms-129" />
-                <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-white/80">Your Personal Guide</span>
-              </div>
-
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black text-white leading-[1.1] mb-8">
                 Welcome to{' '}
                 <span className="text-brand-pms-129 italic">Pittsburgh Tomorrow Pioneer</span>
