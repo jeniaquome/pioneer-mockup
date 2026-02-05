@@ -38,7 +38,6 @@ export function HomePage() {
 
   const { scrollYProgress } = useScroll()
   const heroY = useTransform(scrollYProgress, [0, 0.3], ['0%', '30%'])
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
 
   const getBaseUrl = () => {
     if (import.meta.env.VITE_SITE_BASE_URL) return import.meta.env.VITE_SITE_BASE_URL
@@ -93,7 +92,7 @@ export function HomePage() {
           </motion.div>
 
           {/* Content */}
-          <motion.div className="relative z-10 max-w-6xl mx-auto px-6 py-32" style={{ opacity: heroOpacity }}>
+          <div className="relative z-10 max-w-6xl mx-auto px-6 py-32">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -134,7 +133,7 @@ export function HomePage() {
                 </Link>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
 
           {/* Scroll Indicator */}
           <a href="#why" className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
