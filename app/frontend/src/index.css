@@ -771,3 +771,39 @@
     display: none;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHAT WIDGET BUTTON STYLING
+═══════════════════════════════════════════════════════════════════════════ */
+
+.open-iframe-btn {
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* Pulse ring effect */
+.open-iframe-btn::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 50% !important;
+  box-shadow: 0 0 0 0 rgba(244, 179, 61, 0.5) !important;
+  animation: chatPulse 2.5s ease-out infinite !important;
+  pointer-events: none !important;
+}
+
+@keyframes chatPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(244, 179, 61, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(244, 179, 61, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(244, 179, 61, 0);
+  }
+}
+
+.open-iframe-btn:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 8px 25px rgba(46, 49, 146, 0.3) !important;
+}

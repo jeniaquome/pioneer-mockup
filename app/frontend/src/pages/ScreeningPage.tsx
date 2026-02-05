@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/Auth0Context'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useLocation } from 'react-router-dom'
 import { SEO } from '@/components/SEO'
-import { ArrowRight, CheckCircle, Sparkles } from 'lucide-react'
+import { ArrowRight, CheckCircle } from 'lucide-react'
 
 export function ScreeningPage() {
   const { t } = useTranslation()
@@ -86,7 +86,7 @@ export function ScreeningPage() {
       />
       <main className="min-h-screen bg-white pt-24">
         {/* Hero Header */}
-        <section className="bg-brand-reflex-blue py-16 sm:py-20 relative overflow-hidden">
+        <section className="bg-brand-reflex-blue py-8 sm:py-10 relative overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
             <div className="absolute inset-0" style={{
@@ -97,22 +97,12 @@ export function ScreeningPage() {
           </div>
 
           <div className="container max-w-4xl mx-auto px-6 relative z-10">
-            {/* Badge */}
-            <div className="flex justify-center mb-8">
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-                <Sparkles className="w-4 h-4 text-brand-pms-129" />
-                <span className="text-[9px] uppercase tracking-[0.3em] font-black text-white/80">
-                  {t('screening.badge', '5-Minute Survey')}
-                </span>
-              </div>
-            </div>
-
             <header className="text-center">
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 leading-[1.1]">
-                {t('screening.title', 'Get Your')} <span className="text-brand-pms-129 italic">{t('screening.titleAccent', 'Personal Guide')}</span>
+              <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-3 leading-[1.1]">
+                {t('screening.title', 'Tell us about you')} <span className="text-brand-pms-129 italic">{t('screening.titleAccent', 'Personal Guide')}</span>
               </h1>
-              <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto font-light leading-relaxed">
-                {t('screening.description', 'Answer a few questions and we\'ll create a customized roadmap with resources tailored to your specific needs and goals.')}
+              <p className="text-sm sm:text-base text-white/70 max-w-xl mx-auto font-light leading-relaxed">
+                {t('screening.description', 'Answer a few quick questions so we can create your personalized guide for living and thriving in Pittsburgh.')}
               </p>
             </header>
           </div>

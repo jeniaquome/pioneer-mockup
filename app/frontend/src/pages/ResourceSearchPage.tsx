@@ -8,6 +8,8 @@ import { ResourceCard } from '@/components/ResourceCard'
 import { SEO } from '@/components/SEO'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { GlobalResourceSearch } from '@/components/GlobalResourceSearch'
+import { Search, AlertCircle } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 interface Resource {
   id: string
@@ -176,59 +178,90 @@ export function ResourceSearchPage() {
 
   return (
     <>
-      <SEO 
+      <SEO
         title={`${t('resources.searchResults.title', 'Search Results')} - ${searchQuery}`}
         description={`Search results for "${searchQuery}" in Pittsburgh newcomer resources`}
         keywords={`Pittsburgh, resources, search, ${searchQuery}, newcomers, immigrants`}
         url={`https://www.pittsburghpioneer.com/resources/search?q=${encodeURIComponent(searchQuery)}`}
       />
-      <div className="min-h-screen bg-white">
-        <div className="container max-w-6xl mx-auto py-6 px-4">
-          <div className="mb-6">
-            {/* Breadcrumb Navigation */}
-            <Breadcrumb 
-              items={[
-                { 
-                  label: t('nav.resources', 'Resources'), 
-                  path: '/resources',
-                  translationKey: 'nav.resources'
-                },
-                { 
-                  label: t('resources.searchResults.title', 'Search Results'),
-                  translationKey: 'resources.searchResults.title'
-                }
-              ]}
-              className="mb-4"
-            />
+      <main className="min-h-screen bg-white pt-24">
+        {/* Hero Header */}
+        <section className="bg-brand-reflex-blue py-10 sm:py-12 relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 25% 25%, #F4B33D 1px, transparent 1px),
+                               radial-gradient(circle at 75% 75%, #F4B33D 1px, transparent 1px)`,
+              backgroundSize: '60px 60px'
+            }} />
+          </div>
 
-            {/* Search Results Label */}
-            <p className="text-lg text-brand-reflex-blue/80 mb-4">
-              {t('resources.searchResults.title', 'Search Results')} {t('resources.searchResults.for', 'for')} "{searchQuery}"
-            </p>
-
-            {/* Search Bar */}
-            <div className="mb-6">
-              <GlobalResourceSearch />
+          <div className="container max-w-6xl mx-auto px-6 relative z-10">
+            {/* Breadcrumb */}
+            <div className="mb-4">
+              <Breadcrumb
+                items={[
+                  {
+                    label: t('nav.resources', 'Resources'),
+                    path: '/resources',
+                    translationKey: 'nav.resources'
+                  },
+                  {
+                    label: t('resources.searchResults.title', 'Search Results'),
+                    translationKey: 'resources.searchResults.title'
+                  }
+                ]}
+                className="text-white/60 [&_a]:text-white/60 [&_a:hover]:text-brand-pms-129"
+              />
             </div>
 
-            {/* Results Summary */}
-            {!loading && (
-              <div className="text-sm text-brand-reflex-blue/80 brand-accent mb-4">
-                {t('resources.showingResults', {
-                  current: total > 0 ? `${(currentPage - 1) * pageSize + 1}–${Math.min(currentPage * pageSize, total)}` : '0',
-                  total: total,
-                  defaultValue: `Showing {{current}} of {{total}} resources`
-                })}
-              </div>
-            )}
+            <motion.header
+              className="text-center mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-3 leading-[1.1]">
+                Search <span className="text-brand-pms-129 italic">Results</span>
+              </h1>
+              {searchQuery && (
+                <p className="text-base text-white/70 font-light">
+                  Showing results for "<span className="text-white font-medium">{searchQuery}</span>"
+                </p>
+              )}
+            </motion.header>
+
+            {/* Search Bar */}
+            <motion.div
+              className="max-w-xl mx-auto"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+            >
+              <GlobalResourceSearch />
+            </motion.div>
           </div>
+        </section>
+
+        {/* Content Section */}
+        <article className="container max-w-6xl mx-auto py-8 px-6">
+          {/* Results Summary */}
+          {!loading && (
+            <div className="text-sm text-gray-500 mb-6">
+              {t('resources.showingResults', {
+                current: total > 0 ? `${(currentPage - 1) * pageSize + 1}–${Math.min(currentPage * pageSize, total)}` : '0',
+                total: total,
+                defaultValue: `Showing {{current}} of {{total}} resources`
+              })}
+            </div>
+          )}
 
           {/* Loading State */}
           {loading && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="animate-pulse">
-                  <div className="h-28 bg-gray-200 rounded-lg"></div>
+                  <div className="h-32 bg-gray-100 rounded-2xl"></div>
                 </div>
               ))}
             </div>
@@ -236,45 +269,66 @@ export function ResourceSearchPage() {
 
           {/* Error State */}
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-              <p className="text-red-800">{error}</p>
-            </div>
+            <motion.div
+              className="bg-red-50 border border-red-100 rounded-2xl p-8 text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-8 h-8 text-red-500" />
+              </div>
+              <p className="text-red-800 font-medium mb-2">{error}</p>
+              <p className="text-red-600/70 text-sm">Please try again or adjust your search.</p>
+            </motion.div>
           )}
 
           {/* Empty State */}
           {!loading && !error && resources.length === 0 && searchQuery && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg mb-2">
-                {t('resources.searchResults.noResults', 'No resources found matching your search.')}
+            <motion.div
+              className="text-center py-16"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Search className="w-10 h-10 text-gray-400" />
+              </div>
+              <h3 className="font-serif text-2xl font-bold text-brand-reflex-blue mb-3">
+                {t('resources.searchResults.noResults', 'No resources found')}
+              </h3>
+              <p className="text-gray-500 max-w-md mx-auto">
+                {t('resources.searchResults.tryDifferent', 'We couldn\'t find any resources matching your search. Try different keywords or browse our categories.')}
               </p>
-              <p className="text-gray-400">
-                {t('resources.searchResults.tryDifferent', 'Try a different search term.')}
-              </p>
-            </div>
+            </motion.div>
           )}
 
           {/* Results List */}
           {!loading && resources.length > 0 && (
             <div className="space-y-4">
-              {resources.map((r) => (
-                <ResourceCard
+              {resources.map((r, idx) => (
+                <motion.div
                   key={r.id}
-                  resource={{
-                    id: r.id,
-                    ready: true,
-                    category: r.category,
-                    subcategory: r.subcategory,
-                    resource_name: r.resource_name,
-                    summary: r.summary,
-                    website_link: r.website_link,
-                    physical_location: r.physical_location,
-                    notes: r.notes,
-                  } as any}
-                  context="category"
-                  isAuthenticated={isAuthenticated}
-                  isSaved={savedResources.includes(r.id)}
-                  onBookmarkToggle={() => toggleBookmark(r.id)}
-                />
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: idx * 0.05 }}
+                >
+                  <ResourceCard
+                    resource={{
+                      id: r.id,
+                      ready: true,
+                      category: r.category,
+                      subcategory: r.subcategory,
+                      resource_name: r.resource_name,
+                      summary: r.summary,
+                      website_link: r.website_link,
+                      physical_location: r.physical_location,
+                      notes: r.notes,
+                    } as any}
+                    context="category"
+                    isAuthenticated={isAuthenticated}
+                    isSaved={savedResources.includes(r.id)}
+                    onBookmarkToggle={() => toggleBookmark(r.id)}
+                  />
+                </motion.div>
               ))}
             </div>
           )}
@@ -291,8 +345,8 @@ export function ResourceSearchPage() {
               />
             </div>
           )}
-        </div>
-      </div>
+        </article>
+      </main>
     </>
   )
 }

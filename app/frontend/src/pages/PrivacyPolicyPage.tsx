@@ -12,8 +12,8 @@ export function PrivacyPolicyPage() {
         keywords="privacy policy, data protection, privacy, security, Pittsburgh Tomorrow, Pittsburgh Tomorrow Pioneer"
         url="https://www.pittsburghpioneer.com/privacy"
       />
-      <main className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-6xl lg:max-w-7xl">
+      <main className="min-h-screen bg-white pt-24">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-4xl">
         
         {/* Page Title - Centered at Top */}
         <div className="text-center mb-12">

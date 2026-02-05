@@ -243,9 +243,6 @@ export function HomePage() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="absolute -bottom-4 -left-4 bg-brand-pms-129 text-brand-reflex-blue px-6 py-3 rounded-lg font-black text-sm shadow-lg">
-                  90 Neighborhoods
-                </div>
               </motion.div>
             </div>
           </div>
@@ -281,66 +278,80 @@ export function HomePage() {
                   icon: <Globe className="w-6 h-6" />,
                   title: "Made for You — Wherever You're From",
                   desc: "We know not everyone speaks English as their first language. That's why Pittsburgh Tomorrow Pioneer supports dozens of global languages, including Spanish, Arabic, French, Chinese, Dari, and more. If you type in your native language, Pioneer will respond in kind.",
+                  link: null,
                 },
                 {
                   icon: <Map className="w-6 h-6" />,
                   title: 'Create Your Personal Roadmap',
                   desc: "Our most powerful tool is your personalized roadmap — a checklist made just for you. By answering a few simple questions about your needs, Pioneer creates a tailored action plan. View and update anytime, save your progress, download or print your checklist.",
+                  link: '/screening',
                 },
                 {
                   icon: <MessageCircle className="w-6 h-6" />,
                   title: 'Smart, Self-Guided Support',
                   desc: "Pioneer features a friendly AI chatbot trained to answer hundreds of common questions. It can guide you to resources, explain how local systems work, and help you take the next step.",
+                  link: null,
                 },
                 {
                   icon: <Heart className="w-6 h-6" />,
                   title: 'Trusted Partners',
                   desc: "Access our complete directory of trusted partners — public agencies, nonprofits, and service providers throughout Pittsburgh and Allegheny County. Our network includes 380+ not-for-profit organizations ready to help with your specific needs.",
+                  link: '/resources',
                 },
                 {
                   icon: <Shield className="w-6 h-6" />,
                   title: 'Your Privacy, Protected',
                   desc: "Your privacy and security matter to us. If you choose to create an account, your personal data is protected by SOC II-compliant security protocols. We will never sell or share your data. You remain in full control of your information at all times.",
+                  link: '/privacy',
                 },
                 {
                   icon: <CheckCircle2 className="w-6 h-6" />,
                   title: 'Free & Comprehensive',
                   desc: "Pittsburgh Tomorrow Pioneer is completely free to use. Whether you're finding housing, enrolling your child in school, learning English, or looking to meet people who share your faith, language, or interests — we've got you covered.",
+                  link: '/resources',
                 },
-              ].map((feature, i) => (
-                <motion.div
-                  key={i}
-                  className="bg-white p-8 rounded-2xl border border-gray-100 hover:shadow-lg hover:border-brand-pms-129/30 transition-all duration-300"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="w-12 h-12 bg-brand-reflex-blue rounded-xl flex items-center justify-center text-white mb-5">
-                    {feature.icon}
-                  </div>
-                  <h3 className="text-lg font-black text-brand-reflex-blue mb-3">{feature.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{feature.desc}</p>
-                </motion.div>
-              ))}
+              ].map((feature, i) => {
+                const CardContent = (
+                  <>
+                    <div className="w-12 h-12 bg-brand-reflex-blue rounded-xl flex items-center justify-center text-white mb-5 group-hover:bg-brand-pms-129 group-hover:scale-110 transition-all duration-300">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-lg font-black text-brand-reflex-blue mb-3 group-hover:text-brand-pms-129 transition-colors duration-300">{feature.title}</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">{feature.desc}</p>
+                    {feature.link && (
+                      <div className="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] text-brand-reflex-blue group-hover:text-brand-pms-129 transition-colors duration-300">
+                        <span>Learn More</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300" />
+                      </div>
+                    )}
+                  </>
+                )
+
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1, duration: 0.5 }}
+                    viewport={{ once: true }}
+                  >
+                    {feature.link ? (
+                      <Link
+                        to={feature.link}
+                        className="group block bg-white p-8 rounded-2xl border border-gray-100 hover:shadow-lg hover:border-brand-pms-129/30 hover:-translate-y-1 transition-all duration-300 h-full"
+                      >
+                        {CardContent}
+                      </Link>
+                    ) : (
+                      <div className="group bg-white p-8 rounded-2xl border border-gray-100 h-full">
+                        {CardContent}
+                      </div>
+                    )}
+                  </motion.div>
+                )
+              })}
             </div>
 
-            {/* CTA */}
-            <motion.div
-              className="text-center mt-12"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <Link
-                to="/screening"
-                className="group inline-flex items-center gap-3 bg-brand-pms-129 text-brand-reflex-blue px-8 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.2em] hover:shadow-lg transition-all duration-300"
-              >
-                <span>Create Your Roadmap</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </motion.div>
           </div>
         </section>
 
@@ -536,9 +547,8 @@ export function HomePage() {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-white leading-tight mb-6">
-                Ready to start your{' '}
-                <span className="text-brand-pms-129 italic">Pittsburgh journey?</span>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-white leading-tight mb-6 whitespace-nowrap">
+                Ready to start your <span className="text-brand-pms-129 italic">Pittsburgh journey?</span>
               </h2>
               <p className="text-lg text-white/70 mb-8 max-w-2xl mx-auto">
                 Create your personalized roadmap in minutes. It's free, private, and available in dozens of languages.

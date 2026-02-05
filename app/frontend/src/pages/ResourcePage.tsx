@@ -167,40 +167,31 @@ export function ResourcePage() {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-10 sm:py-12 bg-gradient-to-b from-gray-50 to-white">
-          <div className="container max-w-3xl mx-auto px-6">
-            <motion.div
-              className="flex flex-col sm:flex-row items-center justify-between gap-6 p-6 sm:p-8 rounded-2xl bg-brand-reflex-blue relative overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-            >
+        {/* CTA Banner */}
+        <section className="py-8 bg-white">
+          <div className="container max-w-6xl mx-auto px-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl bg-brand-reflex-blue relative overflow-hidden">
               {/* Background Pattern */}
               <div className="absolute inset-0 opacity-5">
                 <div className="absolute inset-0" style={{
-                  backgroundImage: `radial-gradient(circle at 25% 25%, #F4B33D 1px, transparent 1px)`,
-                  backgroundSize: '40px 40px'
+                  backgroundImage: `radial-gradient(circle at 20% 50%, #F4B33D 1px, transparent 1px)`,
+                  backgroundSize: '30px 30px'
                 }} />
               </div>
 
               <div className="relative z-10 text-center sm:text-left">
-                <h2 className="font-serif text-2xl sm:text-3xl font-black text-white mb-2 leading-[1.1]">
-                  {t('common.needPersonalizedRecommendations', 'Need personalized')} <span className="text-brand-pms-129 italic">{t('common.recommendations', 'recommendations?')}</span>
-                </h2>
-                <p className="text-sm text-white/70 font-light">
-                  {t('common.personalizedRecommendationsDescription', 'Take our quick screening to get a customized checklist with resources specifically chosen for your needs.')}
+                <p className="font-serif text-lg sm:text-xl font-black text-white leading-tight">
+                  Need <span className="text-brand-pms-129 italic">personalized</span> recommendations?
                 </p>
               </div>
               <Link
                 to="/screening"
-                className="relative z-10 flex-shrink-0 group inline-flex items-center gap-2 bg-brand-pms-129 text-brand-reflex-blue px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.15em] hover:shadow-[0_0_30px_rgba(244,179,61,0.5)] transition-all duration-300 hover:scale-105"
+                className="relative z-10 flex-shrink-0 group inline-flex items-center gap-2 bg-brand-pms-129 text-brand-reflex-blue px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.12em] hover:shadow-[0_0_20px_rgba(244,179,61,0.5)] transition-all duration-300"
               >
-                <span>{t('common.getYourPersonalRoadmap', 'Get Your Personal Roadmap')}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                <span>Get Your Roadmap</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-300" />
               </Link>
-            </motion.div>
+            </div>
           </div>
         </section>
       </main>
